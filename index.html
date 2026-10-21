@@ -1,0 +1,1100 @@
+<title>Pack- & Pick-KPI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: Leitstand – Kopfleiste, Filter, KPI-Leiste, Packer-Ranking (volle Breite), Picker | Datenqualität, Verlauf | Typen, Matrix, Stunden | Quali-Abgleich */
+:root{
+  --bg:#0c1317; --panel:#121c22; --panel2:#17232a; --line:#223139; --line2:#2c3f49;
+  --fg:#dde6e9; --muted:#7d929b; --dim:#56686f;
+  --pack:#45c49c; --pack-soft:rgba(69,196,156,.16);
+  --pick:#e3a443; --pick-soft:rgba(227,164,67,.16);
+  --warn:#e2705a; --warn-soft:rgba(226,112,90,.14);
+  --leih:#8fa8ff; --leih-soft:rgba(143,168,255,.14);
+  --f-disp:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--f-body);font-size:14px;line-height:1.45;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+.wrap{max-width:1480px;margin:0 auto;padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.num,td.n,.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--pack);outline-offset:2px}
+
+/* Kopf */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px 14px;flex-wrap:wrap;padding-block:12px}
+.brand{display:flex;align-items:baseline;gap:12px;min-width:0;flex-wrap:wrap}
+.brand h1{font-family:var(--f-disp);font-weight:700;font-size:26px;letter-spacing:.02em;margin:0;text-transform:uppercase;line-height:1}
+.brand h1 span{color:var(--pack)}
+.brand .meta{color:var(--muted);font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.status{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-disp);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+.status.on i{background:var(--pack);box-shadow:0 0 8px var(--pack)}
+.spacer{flex:1}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line2);border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--pack)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.primary{background:var(--pack);border-color:var(--pack);color:#06231a;font-weight:600}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn.danger:hover{border-color:var(--warn);color:var(--warn)}
+
+/* Filter */
+.filters{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-end;padding:14px 0 6px}
+.fgroup{display:flex;flex-direction:column;gap:6px;min-width:0}
+.flabel{font-family:var(--f-disp);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+input[type=date],input[type=search],input[type=number],input[type=text],select{background:var(--panel);border:1px solid var(--line2);border-radius:6px;padding:6px 8px;min-width:0}
+select{cursor:pointer;max-width:100%}
+input[type=search]{width:190px}
+.chip{background:var(--panel);border:1px solid var(--line2);border-radius:999px;padding:4px 11px;cursor:pointer;font-size:13px;color:var(--muted);display:inline-flex;gap:6px;align-items:center}
+.chip b{font-family:var(--f-mono);font-weight:400;font-size:12px;color:var(--dim)}
+.chip.on{border-color:var(--pack);color:var(--fg);background:var(--pack-soft)}
+.chip.on b{color:var(--pack)}
+.chip:hover{border-color:var(--fg)}
+.linkbtn{background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12px;padding:2px 4px}
+
+/* KPI-Leiste */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:14px 0 18px}
+.kpi{background:var(--panel);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kpi .k{font-family:var(--f-disp);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;gap:6px;align-items:center}
+.kpi .k .dot{width:7px;height:7px;border-radius:2px;flex:none}
+.kpi .v{font-family:var(--f-disp);font-weight:600;font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.kpi .v .trend{font-family:var(--f-mono);font-size:12px;font-weight:400}
+.kpi .s{color:var(--dim);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Panels */
+.grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin-top:16px}
+.grid2b{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px}
+.full{margin-top:16px}
+@media (max-width:1100px){.grid2,.grid2b{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;min-width:0;display:flex;flex-direction:column}
+.phead{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.phead h2{font-family:var(--f-disp);font-weight:600;font-size:19px;letter-spacing:.04em;text-transform:uppercase;margin:0;display:flex;align-items:center;gap:8px}
+.tag{font-family:var(--f-mono);font-size:11px;padding:2px 6px;border-radius:4px;border:1px solid currentColor;line-height:1.3;white-space:nowrap}
+.tag.pack{color:var(--pack)} .tag.pick{color:var(--pick)} .tag.leih{color:var(--leih)}
+.phead .sub{color:var(--muted);font-size:12px}
+.pbody{padding:12px 14px}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:6px;overflow:hidden}
+.seg button{background:var(--panel);border:none;padding:5px 12px;cursor:pointer;font-size:13px;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line2)}
+.seg button.on{background:var(--pack-soft);color:var(--fg)}
+.seg button.on.pk{background:var(--pick-soft)}
+
+/* Tabellen */
+.tbl-wrap{overflow:auto;max-height:640px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{position:sticky;top:0;background:var(--panel2);z-index:1;font-family:var(--f-disp);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:right;padding:8px 10px;border-bottom:1px solid var(--line2);white-space:nowrap;cursor:pointer;user-select:none}
+thead th.l{text-align:left}
+thead th:hover{color:var(--fg)}
+thead th.sorted{color:var(--fg)}
+thead th.sorted::after{content:" ▾";color:var(--pack)}
+thead th.sorted.asc::after{content:" ▴"}
+tbody td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+tbody td.l{text-align:left}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--panel2)}
+td.rank{color:var(--dim);font-family:var(--f-mono);width:34px;text-align:right}
+tr.top3 td.rank{color:var(--fg)}
+td.name{font-weight:500;max-width:240px;overflow:hidden;text-overflow:ellipsis}
+.lt{display:inline-block;margin-left:6px;font-family:var(--f-mono);font-size:10px;color:var(--leih);border:1px solid var(--leih);border-radius:3px;padding:0 4px;vertical-align:1px;font-weight:400}
+.share{display:flex;align-items:center;gap:8px;justify-content:flex-end;min-width:110px}
+.share .bar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden;max-width:90px}
+.share .bar i{display:block;height:100%;border-radius:3px}
+.pack-t .share .bar i{background:var(--pack)} .pick-t .share .bar i{background:var(--pick)}
+.muted{color:var(--muted)} .dim{color:var(--dim)} .warnc{color:var(--warn)}
+.empty-row td{text-align:center;color:var(--muted);padding:24px;cursor:default}
+.amp{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--dim)}
+.amp.ok{background:var(--pack)} .amp.mid{background:var(--pick)} .amp.low{background:var(--warn)}
+.kpi .v .amp{width:11px;height:11px;margin:0}
+.trend{font-family:var(--f-mono);font-size:12px}
+.trend.up{color:var(--pack)} .trend.down{color:var(--warn)} .trend.flat{color:var(--muted)}
+.q{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;font-family:var(--f-body);border:1px solid transparent}
+.q0{color:var(--dim);border-color:var(--line2)}
+.q1{color:var(--warn);background:var(--warn-soft)}
+.q2{color:var(--pick);background:var(--pick-soft)}
+.q3{color:var(--pack);background:var(--pack-soft)}
+.q4{color:#06231a;background:var(--pack)}
+
+/* Hinweis-Zeilen */
+.notes{display:flex;flex-direction:column;gap:6px;padding:10px 14px;border-top:1px solid var(--line);font-size:12.5px}
+.note{display:flex;gap:8px;align-items:baseline;color:var(--muted)}
+.pill{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;background:var(--warn-soft);color:var(--warn);font-family:var(--f-mono);white-space:nowrap}
+
+/* Charts */
+svg{display:block;width:100%;height:auto}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.axis{fill:var(--dim);font-family:var(--f-mono);font-size:10px}
+.gridl{stroke:var(--line);stroke-width:1}
+.chart-tip{position:fixed;pointer-events:none;background:var(--panel2);border:1px solid var(--line2);border-radius:6px;padding:7px 10px;font-size:12px;z-index:60;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.chart-tip .t{font-family:var(--f-disp);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-size:12px}
+.chart-tip div{font-family:var(--f-mono)}
+
+/* Matrix */
+.mx-wrap{overflow:auto;max-height:620px}
+table.mx{width:auto;border-collapse:separate;border-spacing:0;font-size:11px}
+table.mx th,table.mx td{padding:0;border-bottom:1px solid var(--line);text-align:center}
+table.mx thead th{font-family:var(--f-mono);font-weight:400;letter-spacing:0;text-transform:none;font-size:10px;padding:6px 0;min-width:34px;cursor:default;line-height:1.2}
+table.mx thead th.we,table.mx td.we{border-left:1px solid var(--line2)}
+table.mx .nm{position:sticky;left:0;z-index:2;background:var(--panel);text-align:left;padding:5px 12px 5px 10px;font-family:var(--f-body);font-size:12.5px;font-weight:500;white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis;border-right:1px solid var(--line2)}
+table.mx thead .nm{z-index:3;background:var(--panel2)}
+table.mx td.c{min-width:34px;height:26px;font-family:var(--f-mono);font-size:10.5px;color:var(--fg);cursor:default}
+table.mx td.c.hi{color:#05201a;font-weight:500}
+table.mx td.sum{padding:0 10px;font-family:var(--f-mono);color:var(--muted);border-left:1px solid var(--line2)}
+table.mx tbody tr{cursor:default}
+table.mx tbody tr:hover td.nm{background:var(--panel2)}
+
+/* Datenqualität / Listen */
+.dq{display:flex;flex-direction:column}
+.dq .it{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.dq .it:last-child{border-bottom:none}
+.dq .it>span:first-child{color:var(--muted);min-width:0}
+.dq .it .num{white-space:nowrap}
+.dq h4,.qa h4{font-family:var(--f-disp);font-weight:600;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 4px}
+.qa{display:flex;flex-direction:column;gap:2px}
+.qa .it{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);align-items:center;font-size:13px}
+.qa .it>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qa .none{color:var(--dim);font-size:13px;padding:4px 0}
+
+/* Upload / Leerzustand */
+.drop{margin:28px auto;max-width:760px;border:1.5px dashed var(--line2);border-radius:12px;padding:44px 28px;text-align:center;background:var(--panel);display:flex;flex-direction:column;gap:14px;align-items:center}
+.drop.over{border-color:var(--pack);background:var(--pack-soft)}
+.drop h2{font-family:var(--f-disp);font-size:30px;text-transform:uppercase;letter-spacing:.03em;margin:0;text-wrap:balance}
+.drop p{color:var(--muted);margin:0;max-width:56ch}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:520px;margin-top:6px;text-align:left}
+.cols div{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px}
+.cols b{font-family:var(--f-mono);font-weight:500}
+.cols .p1 b{color:var(--pack)} .cols .p2 b{color:var(--pick)}
+.small{font-size:12px;color:var(--dim)}
+.err{color:var(--warn);font-size:13px}
+.loading{color:var(--muted);font-family:var(--f-disp);letter-spacing:.08em;text-transform:uppercase}
+
+/* Drawer */
+.scrim{position:fixed;inset:0;background:rgba(3,8,10,.6);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(600px,100%);background:var(--panel);border-left:1px solid var(--line2);z-index:41;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer .dh{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.drawer .dh h3{font-family:var(--f-disp);font-size:24px;text-transform:uppercase;letter-spacing:.03em;margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.drawer .db{overflow:auto;padding:14px 16px 28px;display:flex;flex-direction:column;gap:18px;flex:1;min-height:0}
+.drawer .db>*{flex:none}
+.dk{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.dk .kpi .v{font-size:24px}
+.sect h4{font-family:var(--f-disp);font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.sect p{color:var(--muted);font-size:13px;margin:0 0 10px;max-width:62ch}
+.typelist{display:flex;flex-direction:column;gap:6px}
+.typelist .tr{display:grid;grid-template-columns:minmax(0,1fr) 120px 60px;gap:10px;align-items:center;font-size:13px}
+.typelist .tr .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.typelist .tr .bar i{display:block;height:100%}
+.typelist .tr span:last-child{text-align:right;font-family:var(--f-mono)}
+.qgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 16px}
+.qgrid div{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px solid var(--line)}
+.x{background:none;border:1px solid var(--line2);border-radius:6px;width:34px;height:34px;cursor:pointer;font-size:18px;line-height:1;flex:none}
+.x:hover{border-color:var(--fg)}
+/* Einstellungen */
+.frow{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}
+.frow input[type=number]{width:100%;text-align:right;font-family:var(--f-mono)}
+.frow .hint{color:var(--dim);font-size:12px;display:block}
+.lmap{display:grid;grid-template-columns:130px minmax(0,1fr) 128px 128px 34px;gap:6px;align-items:center;margin-bottom:6px}
+.lmap.h{font-size:11px;color:var(--dim);font-family:var(--f-disp);letter-spacing:.08em;text-transform:uppercase}
+.qmap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
+.qmap span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hist{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.hist .hm{min-width:0}
+.hist .hm div:last-child{color:var(--dim);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--panel2);border:1px solid var(--pack);border-radius:8px;padding:9px 16px;z-index:70;font-size:13px}
+footer{color:var(--dim);font-size:12px;margin-top:22px;display:flex;flex-direction:column;gap:4px;max-width:120ch}
+@media (max-width:640px){
+  header.top{position:static}
+  .brand h1{font-size:22px}
+  .kpi .v{font-size:24px}
+  .cols{grid-template-columns:1fr}
+  input[type=search]{width:100%}
+  .dk{grid-template-columns:repeat(2,1fr)}
+  .lmap{grid-template-columns:1fr 1fr}
+  .lmap.h{display:none}
+  .qgrid{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <h1>Pack<span>&amp;</span>Pick KPI</h1>
+      <div class="meta" id="meta">Keine Liste geladen</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="status" id="status"><i></i><span>Bereit</span></div>
+    <button class="btn" id="btnSet" type="button">Einstellungen</button>
+    <button class="btn" id="btnExp" type="button" disabled>Excel-Export</button>
+    <label class="btn primary" for="file">Liste laden</label>
+    <input type="file" id="file" accept=".xlsx,.xls,.xlsm,.csv" hidden>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="empty">
+    <div class="drop" id="drop">
+      <h2>Lieferschein-Controlling hier ablegen</h2>
+      <p>Excel-Datei hierher ziehen oder über „Liste laden“ auswählen. Die Liste selbst wird nicht hochgeladen. Für den Vergleich merkt sich die App nur eine kleine Zusammenfassung je Liste in diesem Browser.</p>
+      <div class="cols">
+        <div class="p1">Spalte <b>Y</b> · BearbeiterLager<br><span class="small">wer hat gepackt</span></div>
+        <div class="p2">Spalte <b>W</b> · GepicktWer<br><span class="small">wer hat gepickt</span></div>
+      </div>
+      <label class="btn" for="file">Datei auswählen</label>
+      <div class="err" id="err" hidden></div>
+      <div class="loading" id="loading" hidden>Liste wird gelesen …</div>
+    </div>
+  </section>
+
+  <section id="app" hidden>
+    <div class="filters">
+      <div class="fgroup">
+        <span class="flabel">Zeitraum</span>
+        <div class="row">
+          <input type="date" id="from" aria-label="Von"><span class="dim">–</span><input type="date" id="to" aria-label="Bis">
+        </div>
+      </div>
+      <div class="fgroup">
+        <span class="flabel">Schnellwahl</span>
+        <div class="row" id="quick"></div>
+      </div>
+      <div class="fgroup">
+        <span class="flabel">Personal</span>
+        <div class="row" id="grp">
+          <button class="chip on" data-g="all">Alle</button><button class="chip" data-g="stamm">Stamm</button><button class="chip" data-g="leih">Leih</button>
+        </div>
+      </div>
+      <div class="fgroup">
+        <span class="flabel">Vergleich mit</span>
+        <select id="base" aria-label="Vergleich mit"></select>
+      </div>
+      <div class="fgroup">
+        <span class="flabel">Mitarbeiter suchen</span>
+        <input type="search" id="q" placeholder="Name …">
+      </div>
+    </div>
+    <div class="filters" style="padding-top:4px">
+      <div class="fgroup" style="flex:1">
+        <span class="flabel">Auftragstyp <button class="linkbtn" id="tAll">alle</button><button class="linkbtn" id="tNone">keine</button></span>
+        <div class="row" id="types"></div>
+      </div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="panel pack-t">
+      <div class="phead">
+        <h2>Gepackt <span class="tag pack">Spalte Y</span></h2>
+        <span class="sub" id="packSub">BearbeiterLager · Klick auf Namen für Details</span>
+        <div class="spacer"></div>
+        <div class="legend"><span><i class="amp ok"></i>Ziel erreicht</span><span><i class="amp mid"></i>ab 85 %</span><span><i class="amp low"></i>darunter</span></div>
+      </div>
+      <div class="tbl-wrap"><table id="tPack"></table></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel pick-t">
+        <div class="phead">
+          <h2>Gepickt <span class="tag pick">Spalte W</span></h2>
+          <span class="sub">GepicktWer</span>
+        </div>
+        <div class="tbl-wrap"><table id="tPick"></table></div>
+        <div class="notes" id="pickNotes"></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Datenqualität</h2></div>
+        <div class="pbody"><div class="dq" id="dq"></div></div>
+      </div>
+    </div>
+
+    <div class="grid2b">
+      <div class="panel">
+        <div class="phead">
+          <h2>Tagesverlauf</h2>
+          <div class="spacer"></div>
+          <div class="legend"><span><i style="background:var(--pack)"></i>gepackt</span><span><i style="background:var(--pick)"></i>gepickt (namentlich)</span></div>
+        </div>
+        <div class="pbody" id="cDay"></div>
+      </div>
+      <div class="panel">
+        <div class="phead"><h2>Auftragstypen</h2><span class="sub">gepackte LS im Filter</span></div>
+        <div class="pbody"><div class="typelist" id="typeMix"></div></div>
+      </div>
+    </div>
+
+    <div class="panel full">
+      <div class="phead">
+        <h2>Tagesmatrix</h2>
+        <span class="sub">Lieferscheine je Mitarbeiter und Tag · Linie = Wochenbeginn</span>
+        <div class="spacer"></div>
+        <div class="seg" id="mxSeg"><button class="on" data-m="pack">Packen</button><button data-m="pick" class="pk">Picken</button></div>
+      </div>
+      <div class="mx-wrap" id="mx"></div>
+    </div>
+
+    <div class="grid2b" id="rowLast">
+      <div class="panel">
+        <div class="phead">
+          <h2>Stundenprofil Packen</h2>
+          <span class="sub">Lieferscheine je Uhrzeit (BearbeitetLagerDatum)</span>
+        </div>
+        <div class="pbody" id="cHour"></div>
+      </div>
+      <div class="panel" id="qaPanel">
+        <div class="phead"><h2>Quali-Abgleich</h2><span class="sub">mit deiner Qualifikationsmatrix</span></div>
+        <div class="pbody"><div class="qa" id="qa"></div></div>
+      </div>
+    </div>
+
+    <footer id="foot"></footer>
+  </section>
+</main>
+
+<div class="chart-tip" id="tip" hidden></div>
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-modal="true" role="dialog"></aside>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s);
+const fmt=n=>(n==null||isNaN(n)||!isFinite(n))?"–":Math.round(n).toLocaleString("de-DE");
+const fmt1=n=>(n==null||isNaN(n)||!isFinite(n))?"–":n.toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1});
+const pct=(a,b)=>b?fmt1(a/b*100)+" %":"–";
+const r1=n=>(n==null||!isFinite(n))?null:Math.round(n*10)/10;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+const WD=["So","Mo","Di","Mi","Do","Fr","Sa"];
+const MON=["Jan","Feb","Mär","Apr","Mai","Jun","Jul","Aug","Sep","Okt","Nov","Dez"];
+const dayLabel=d=>{const [y,m,dd]=d.split("-");return dd+"."+m+"."};
+const wday=d=>{const [y,m,dd]=d.split("-").map(Number);return new Date(Date.UTC(y,m-1,dd)).getUTCDay();};
+const dayLong=d=>{const [y,m,dd]=d.split("-");return WD[wday(d)]+" "+dd+"."+m+"."+y};
+const dShort=d=>{const [y,m,dd]=d.split("-");return dd+"."+m+"."+y.slice(2)};
+
+const NOT_ASKED="Nicht abgefragt!";
+const SKEY="packpick-kpi-settings-v1", HKEY="packpick-kpi-history-v1", QKEY="qualimatrix-bischofsheim-v3";
+const QAREAS=["Picken","Packen","Retoure","Wareneingang","Frachten","Versand","GotBag-Druck","Stapler"];
+const QLV=[["–","nicht eingesetzt"],["Einarb.","in Einarbeitung"],["Anleit.","unter Anleitung"],["Selbst.","selbstständig"],["Anleiten","kann anleiten"]];
+
+/* ---------- Speicher ---------- */
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true}catch(e){return false}}
+const DEF={target:30,pauseMin:20,wType:{},wPak:0.5,wPos:0.25,leihExtra:[],leihMap:[],qualiMap:{}};
+function loadSettings(){let s={};try{s=JSON.parse(lsGet(SKEY)||"{}")||{}}catch(e){}return Object.assign(JSON.parse(JSON.stringify(DEF)),s);}
+let SET=loadSettings();
+const saveSettings=()=>lsSet(SKEY,JSON.stringify(SET));
+function loadHist(){try{const h=JSON.parse(lsGet(HKEY)||"[]");return Array.isArray(h)?h:[]}catch(e){return []}}
+function saveHist(h){
+  h=h.slice(0,10);
+  while(h.length){if(lsSet(HKEY,JSON.stringify(h)))return true;h.pop();}
+  lsSet(HKEY,"[]");return false;
+}
+
+let DATA=null, NET=new Map(), CUR=null, QUALI=null, QMATCH=new Map();
+const ST={from:null,to:null,types:new Set(),q:"",grp:"all",base:"",mx:"pack",sortPack:{k:"ls",asc:false},sortPick:{k:"ls",asc:false}};
+
+/* ---------- Datum ---------- */
+function toStamp(v){
+  if(v==null||v==="")return null;
+  let y,mo,d,h=0,mi=0;
+  if(typeof v==="number"){
+    if(v<20000||v>80000)return null;
+    const dt=new Date(Math.round((v-25569)*86400000));
+    y=dt.getUTCFullYear();mo=dt.getUTCMonth()+1;d=dt.getUTCDate();h=dt.getUTCHours();mi=dt.getUTCMinutes()+dt.getUTCSeconds()/60;
+  }else if(v instanceof Date){
+    y=v.getFullYear();mo=v.getMonth()+1;d=v.getDate();h=v.getHours();mi=v.getMinutes()+v.getSeconds()/60;
+  }else{
+    const s=String(v).trim();let m;
+    if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?/))){y=+m[1];mo=+m[2];d=+m[3];h=+(m[4]||0);mi=+(m[5]||0)+(+(m[6]||0))/60;}
+    else if((m=s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?/))){d=+m[1];mo=+m[2];y=+m[3];if(y<100)y+=2000;h=+(m[4]||0);mi=+(m[5]||0)+(+(m[6]||0))/60;}
+    else return null;
+  }
+  return {day:y+"-"+String(mo).padStart(2,"0")+"-"+String(d).padStart(2,"0"),hour:h,t:h+mi/60};
+}
+const cleanName=v=>{if(v==null)return "";return String(v).replace(/\s+/g," ").trim();};
+const toNum=v=>{if(typeof v==="number")return v;if(v==null||v==="")return 0;const n=parseFloat(String(v).replace(",","."));return isNaN(n)?0:n;};
+function addDay(d,n=1){const [y,m,dd]=d.split("-").map(Number);return new Date(Date.UTC(y,m-1,dd+n)).toISOString().slice(0,10);}
+
+/* ---------- Einlesen ---------- */
+function colIdx(letters){let n=0;for(const c of letters)n=n*26+(c.charCodeAt(0)-64);return n-1;}
+function parseWorkbook(buf,fileName){
+  const wb=XLSX.read(buf,{type:"array",cellDates:false,dense:true});
+  let best=null;
+  for(const sn of wb.SheetNames){
+    const aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:true,defval:null,blankrows:false});
+    for(let i=0;i<Math.min(aoa.length,40);i++){
+      const r=(aoa[i]||[]).map(c=>c==null?"":String(c).trim().toLowerCase());
+      if(r.includes("bearbeiterlager")||r.includes("gepicktwer")){best={aoa,hi:i,head:r};break;}
+    }
+    if(best)break;
+  }
+  let aoa,hi,H;
+  if(best){({aoa,hi}=best);H=best.head;}
+  else{
+    aoa=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:null,blankrows:false});
+    hi=aoa.findIndex(r=>(r||[]).filter(c=>typeof c==="string"&&c.trim()).length>=8);
+    if(hi<0)throw new Error("In der Datei wurde keine Kopfzeile gefunden. Erwartet werden die Spalten „GepicktWer“ (W) und „BearbeiterLager“ (Y).");
+    H=aoa[hi].map(c=>c==null?"":String(c).trim().toLowerCase());
+  }
+  const f=(name,fallback)=>{const i=H.indexOf(name.toLowerCase());return i>=0?i:(fallback!=null?colIdx(fallback):-1);};
+  const C={
+    packer:f("BearbeiterLager","Y"), packAt:f("BearbeitetLagerDatum","Z"),
+    picker:f("GepicktWer","W"), pickAt:f("GepicktWann","X"),
+    typ:f("Beschreibung"), teile:f("Einzelteile"), pos:f("DivEinzelteile"), pak:f("GepacktAnzahl"),
+    storno:f("StorniertWer"), stornoAt:f("StorniertDatum"), mandant:f("Mandant"), ls:f("LieferscheinNummer")
+  };
+  const rows=[];const mand={};
+  for(let i=hi+1;i<aoa.length;i++){
+    const r=aoa[i];if(!r)continue;
+    const g=k=>C[k]>=0?r[C[k]]:null;
+    const pk=cleanName(g("packer")),pi=cleanName(g("picker"));
+    const lsNo=g("ls");
+    if(!pk&&!pi&&(lsNo==null||lsNo===""))continue;
+    const pa=toStamp(g("packAt")),pw=toStamp(g("pickAt"));
+    const m=cleanName(g("mandant"));if(m)mand[m]=(mand[m]||0)+1;
+    rows.push({
+      typ:cleanName(g("typ"))||"ohne Typ",
+      pk0:pk, pkD:pa&&pa.day, pkH:pa?pa.hour:null, pkT:pa?pa.t:null,
+      pi0:pi, piD:pw&&pw.day,
+      teile:toNum(g("teile")), pos:toNum(g("pos")), pak:toNum(g("pak")),
+      storno:!!(cleanName(g("storno"))||toStamp(g("stornoAt")))
+    });
+  }
+  if(!rows.length)throw new Error("Die Liste enthält keine auswertbaren Zeilen.");
+  let minD=null,maxD=null;const tc={};
+  for(const r of rows){
+    for(const d of [r.pkD,r.piD]){if(!d)continue;if(!minD||d<minD)minD=d;if(!maxD||d>maxD)maxD=d;}
+    tc[r.typ]=(tc[r.typ]||0)+1;
+  }
+  const mandant=Object.entries(mand).sort((a,b)=>b[1]-a[1]).map(e=>e[0]).slice(0,2).join(", ")||"";
+  return {rows,mandant,file:fileName,minDay:minD,maxDay:maxD,typeCounts:tc};
+}
+
+/* ---------- Leih / Zuordnung / Netto-Zeit ---------- */
+const isLeihAcc=n=>!!n&&(/^leiharbeiter\s*\d*$/i.test(n)||SET.leihExtra.some(x=>x.toLowerCase()===n.toLowerCase()));
+function mapName(acc,day){
+  if(!acc)return acc;
+  for(const m of SET.leihMap){
+    if(m.acc===acc&&m.name&&day&&(!m.from||day>=m.from)&&(!m.to||day<=m.to))return m.name.trim();
+  }
+  return acc;
+}
+const wType=t=>{const v=SET.wType[t];return (v==null||v===""||isNaN(v))?1:+v;};
+const rowScore=r=>wType(r.typ)+SET.wPak*Math.max(0,r.pak-1)+SET.wPos*Math.max(0,r.pos-1);
+function prepare(){
+  const T=new Map();
+  for(const r of DATA.rows){
+    r.pk=r.pk0?mapName(r.pk0,r.pkD):"";r.pkL=isLeihAcc(r.pk0);
+    r.pi=r.pi0&&r.pi0!==NOT_ASKED?mapName(r.pi0,r.piD):r.pi0;r.piL=r.pi0!==NOT_ASKED&&isLeihAcc(r.pi0);
+    r.sc=rowScore(r);
+    if(!r.storno&&r.pk&&r.pkD&&r.pkT!=null){const k=r.pk+"|"+r.pkD;let a=T.get(k);if(!a){a=[];T.set(k,a);}a.push(r.pkT);}
+  }
+  const P=SET.pauseMin/60;NET=new Map();
+  for(const [k,a] of T){
+    a.sort((x,y)=>x-y);let net=0;
+    for(let i=1;i<a.length;i++){const g=a[i]-a[i-1];if(g<=P)net+=g;}
+    NET.set(k,{net,span:a[a.length-1]-a[0],min:a[0],max:a[a.length-1]});
+  }
+}
+
+/* ---------- Quali-Matrix ---------- */
+function loadQuali(){
+  const raw=lsGet(QKEY);if(!raw)return null;
+  try{
+    const s=JSON.parse(raw);const quals=s.quals||{},pos=s.positions||{};
+    const people=[...new Set(Object.keys(quals).map(k=>k.split("||")[0]))].sort((a,b)=>a.localeCompare(b,"de"));
+    if(!people.length)return null;
+    return {people,lvl:(p,a)=>+(quals[p+"||"+a]??0),pos:p=>pos[p]||""};
+  }catch(e){return null;}
+}
+const norm=s=>String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/ß/g,"ss");
+const toks=s=>norm(s).split(/[^a-z]+/).filter(Boolean);
+function lev(a,b){if(Math.abs(a.length-b.length)>2)return 9;const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length];}
+const close=(x,y)=>x===y||(x.length>=5&&y.length>=5&&lev(x,y)<=2);
+function autoMatch(sys){
+  if(!QUALI||!sys||isLeihAcc(sys))return "";
+  const S=toks(sys);const hits=[];
+  for(const p of QUALI.people){
+    const [last,first=""]=p.split(",");const L=toks(last),F=toks(first);if(!L.length)continue;
+    const lastHit=L.some(l=>S.some(s=>close(s,l)));
+    const firstHit=F.length&&F.every(f=>S.some(s=>close(s,f)));
+    const initHit=S.length===1&&F.length&&L.some(l=>S[0]===F[0][0]+l);
+    if((lastHit&&firstHit)||initHit)hits.push(p);
+  }
+  return hits.length===1?hits[0]:"";
+}
+function qualiOf(sys){
+  if(!QUALI)return "";
+  if(Object.prototype.hasOwnProperty.call(SET.qualiMap,sys)){const v=SET.qualiMap[sys];return QUALI.people.includes(v)?v:"";}
+  if(!QMATCH.has(sys))QMATCH.set(sys,autoMatch(sys));
+  return QMATCH.get(sys);
+}
+const qBadge=(lv)=>`<span class="q q${lv}" title="${QLV[lv][1]}">${QLV[lv][0]}</span>`;
+
+/* ---------- Auswertung ---------- */
+function inRange(d){return d&&d>=ST.from&&d<=ST.to;}
+function filtered(){return DATA.rows.filter(r=>!r.storno&&ST.types.has(r.typ));}
+const grpOk=leih=>ST.grp==="all"||(ST.grp==="leih")===!!leih;
+function aggregate(rows,role,ignoreGrp){
+  const M=new Map();const pack=role==="pack";
+  for(const r of rows){
+    const name=pack?r.pk:r.pi, day=pack?r.pkD:r.piD, L=pack?r.pkL:r.piL;
+    if(!name||!inRange(day))continue;
+    if(!pack&&name===NOT_ASKED)continue;
+    if(!ignoreGrp&&!grpOk(L))continue;
+    let o=M.get(name);
+    if(!o){o={name,role,leih:false,ls:0,pak:0,teile:0,pos:0,score:0,na:0,days:new Map(),types:new Map(),hours:new Array(24).fill(0)};M.set(name,o);}
+    if(L)o.leih=true;
+    o.ls++;o.pak+=r.pak;o.teile+=r.teile;o.pos+=r.pos;o.score+=r.sc;
+    o.types.set(r.typ,(o.types.get(r.typ)||0)+1);
+    let dd=o.days.get(day);if(!dd){dd={n:0,sc:0};o.days.set(day,dd);}
+    dd.n++;dd.sc+=r.sc;
+    if(pack){if(r.pi0===NOT_ASKED)o.na++;if(r.pkH!=null)o.hours[r.pkH]++;}
+  }
+  const list=[...M.values()];
+  for(const o of list){
+    o.nDays=o.days.size;o.perDay=o.ls/o.nDays;
+    if(pack){
+      let nl=0,ns=0,nh=0,bl=0,bh=0;
+      for(const [d,dd] of o.days){const N=NET.get(o.name+"|"+d);if(!N)continue;
+        if(N.net>=0.5){nl+=dd.n;ns+=dd.sc;nh+=N.net;}
+        if(N.span>=0.5){bl+=dd.n;bh+=N.span;}}
+      o.rLS=nl;o.rH=nh;o.perHour=nh?nl/nh:null;o.ptsHour=nh?ns/nh:null;o.bruttoHour=bh?bl/bh:null;o.bH=bh;
+      o.naRate=o.ls?o.na/o.ls:0;
+    }
+    const qp=qualiOf(o.name);o.qp=qp;
+    o.qlv=qp?QUALI.lvl(qp,pack?"Packen":"Picken"):null;
+  }
+  return list;
+}
+function amp(v){if(v==null)return "";const t=+SET.target||0;if(!t)return "";return v>=t?"ok":v>=t*0.85?"mid":"low";}
+
+/* ---------- Vergleich (Verlauf) ---------- */
+function snapId(){return [DATA.mandant,DATA.minDay,DATA.maxDay,DATA.rows.length].join("~");}
+function makeSnapshot(){
+  const pack={},pick={},net={};
+  for(const r of DATA.rows){
+    if(r.storno)continue;
+    if(r.pk&&r.pkD){
+      const p=pack[r.pk]||(pack[r.pk]={l:0,d:{}});if(r.pkL)p.l=1;
+      const dd=p.d[r.pkD]||(p.d[r.pkD]={});const c=dd[r.typ]||(dd[r.typ]=[0,0,0,0,0,0]);
+      c[0]++;c[1]+=r.pak;c[2]+=r.teile;c[3]+=r.pos;c[4]+=Math.max(0,r.pak-1);c[5]+=Math.max(0,r.pos-1);
+    }
+    if(r.pi&&r.pi!==NOT_ASKED&&r.piD){
+      const p=pick[r.pi]||(pick[r.pi]={l:0,d:{}});if(r.piL)p.l=1;
+      const dd=p.d[r.piD]||(p.d[r.piD]={});dd[r.typ]=(dd[r.typ]||0)+1;
+    }
+  }
+  for(const [k,v] of NET){const i=k.lastIndexOf("|");const n=k.slice(0,i),d=k.slice(i+1);(net[n]||(net[n]={}))[d]=[Math.round(v.net*100)/100,Math.round(v.span*100)/100];}
+  return {id:snapId(),file:DATA.file,mandant:DATA.mandant,minDay:DATA.minDay,maxDay:DATA.maxDay,n:DATA.rows.length,savedAt:new Date().toISOString(),pack,pick,net};
+}
+function storeSnapshot(){
+  const s=makeSnapshot();const h=loadHist().filter(x=>x.id!==s.id);h.unshift(s);saveHist(h);
+}
+function baseMetrics(snap){
+  const out={pack:new Map(),pick:new Map(),team:null};if(!snap)return out;
+  let tl=0,th=0;
+  for(const [name,p] of Object.entries(snap.pack)){
+    if(!grpOk(p.l))continue;
+    let ls=0,days=0,nl=0,nh=0;
+    for(const [d,ty] of Object.entries(p.d)){
+      let n=0;for(const [t,c] of Object.entries(ty)){if(ST.types.has(t))n+=c[0];}
+      if(!n)continue;ls+=n;days++;
+      const N=snap.net[name]&&snap.net[name][d];if(N&&N[0]>=0.5){nl+=n;nh+=N[0];}
+    }
+    if(!ls)continue;tl+=nl;th+=nh;
+    out.pack.set(name,{perDay:ls/days,perHour:nh?nl/nh:null});
+  }
+  for(const [name,p] of Object.entries(snap.pick)){
+    if(!grpOk(p.l))continue;let ls=0,days=0;
+    for(const ty of Object.values(p.d)){let n=0;for(const [t,c] of Object.entries(ty))if(ST.types.has(t))n+=c;if(n){ls+=n;days++;}}
+    if(ls)out.pick.set(name,{perDay:ls/days});
+  }
+  out.team=th?tl/th:null;
+  return out;
+}
+function trendHtml(cur,base,unit){
+  if(cur==null||base==null||!base)return '<span class="dim">–</span>';
+  const d=cur/base-1;const p=Math.round(d*100);
+  const cls=p>=2?"up":p<=-2?"down":"flat";const ar=p>=2?"▲":p<=-2?"▼":"■";
+  return `<span class="trend ${cls}" title="vorher ${fmt1(base)} · jetzt ${fmt1(cur)} ${unit}">${ar} ${p>0?"+":""}${p} %</span>`;
+}
+const trendVal=(cur,base)=>(cur==null||!base)?null:cur/base-1;
+
+/* ---------- Render ---------- */
+function render(){
+  const rows=filtered();
+  const pack=aggregate(rows,"pack"), pick=aggregate(rows,"pick");
+  const packAll=aggregate(rows,"pack",true);
+  const hist=loadHist();const snap=ST.base?hist.find(s=>s.id===ST.base):null;
+  const B=baseMetrics(snap);
+  for(const o of pack){const b=B.pack.get(o.name);o.trend=b?trendVal(o.perHour!=null?o.perHour:null,b.perHour):null;o.bVal=b?b.perHour:null;}
+  for(const o of pick){const b=B.pick.get(o.name);o.trend=b?trendVal(o.perDay,b.perDay):null;o.bVal=b?b.perDay:null;}
+
+  const sum=(a,k)=>a.reduce((s,o)=>s+(o[k]||0),0);
+  const totLS=sum(pack,"ls"),totPak=sum(pack,"pak"),totTeile=sum(pack,"teile"),totSc=sum(pack,"score");
+  const totPick=sum(pick,"ls");
+  const nl=sum(pack,"rLS"),nh=sum(pack,"rH");const teamH=nh?nl/nh:null;
+  const bh=pack.reduce((s,o)=>s+(o.bH||0),0),bl=pack.reduce((s,o)=>s+(o.bH?o.bruttoHour*o.bH:0),0);
+  const ptsH=nh?pack.reduce((s,o)=>s+(o.ptsHour!=null?o.ptsHour*o.rH:0),0)/nh:null;
+  const allLS=sum(packAll,"ls"),leihLS=packAll.filter(o=>o.leih).reduce((s,o)=>s+o.ls,0);
+  const leihN=packAll.filter(o=>o.leih).length;
+  let notAsked=0,noPicker=0,noPacker=0;const packDays=new Set();
+  for(const r of rows){
+    if(r.pk&&inRange(r.pkD)&&grpOk(r.pkL))packDays.add(r.pkD);
+    if(r.pi0===NOT_ASKED&&inRange(r.piD))notAsked++;
+    if(!r.pk&&inRange(r.piD||r.pkD))noPacker++;
+    if(!r.pi0&&r.pk&&inRange(r.pkD))noPicker++;
+  }
+  const naTeam=allLS?packAll.reduce((s,o)=>s+o.na,0)/allLS:0;
+  const topP=[...pack].sort((a,b)=>b.ls-a.ls)[0],topK=[...pick].sort((a,b)=>b.ls-a.ls)[0];
+  const pickAll=totPick+notAsked;
+  const a=amp(teamH);
+
+  $("#kpis").innerHTML=[
+    kpi("pack","LS gepackt",fmt(totLS),packDays.size+" Arbeitstage · Ø "+fmt(packDays.size?totLS/packDays.size:0)+"/Tag"),
+    kpi("pack","Pakete",fmt(totPak),"Einzelteile "+fmt(totTeile)),
+    kpi("pack","Punkte gewichtet",fmt(totSc),"Ø "+fmt1(ptsH)+" Punkte/Std"),
+    kpi("pack","Packer aktiv",fmt(pack.length),topP?"Top: "+topP.name:"–"),
+    kpi("pack","Ø LS / Std netto",(a?`<i class="amp ${a}"></i>`:"")+fmt1(teamH)+(snap?" "+trendHtml(teamH,B.team,"LS/Std"):""),"Ziel "+fmt1(+SET.target)+" · brutto "+fmt1(bh?bl/bh:null),true),
+    kpi("leih","Leih-Anteil",pct(leihLS,allLS),fmt(leihLS)+" LS · "+leihN+" Leih-Konten"),
+    kpi("pick","LS gepickt",fmt(totPick),"namentlich erfasst"),
+    kpi("pick","Picker aktiv",fmt(pick.length),topK?"Top: "+topK.name:"–"),
+    kpi("pick","Pick nicht abgefragt",pct(notAsked,pickAll),fmt(notAsked)+" LS ohne Picker-Namen")
+  ].join("");
+
+  CUR={pack,pick,totLS,totPick,teamH,naTeam,snap,B,notAsked,noPicker,noPacker,packDays:packDays.size,totPak,totTeile,totSc,ptsH,leihLS,allLS,bruttoH:bh?bl/bh:null};
+  $("#packSub").textContent="BearbeiterLager · Klick auf Namen für Details"+(snap?" · Trend gegen "+snapLabel(snap):"");
+  renderTable("#tPack",pack,"pack",totLS);
+  renderTable("#tPick",pick,"pick",totPick);
+
+  $("#pickNotes").innerHTML=
+    `<div class="note"><span class="pill">${fmt(notAsked)}</span><span>LS mit „Nicht abgefragt!“ – Picker unbekannt, nicht im Ranking</span></div>`+
+    `<div class="note"><span class="pill">${fmt(noPicker)}</span><span>gepackte LS ganz ohne Eintrag in Spalte W</span></div>`;
+
+  // Tagesverlauf
+  const days=[];{let d=ST.from,g=0;while(d<=ST.to&&g<800){days.push(d);d=addDay(d);g++;}}
+  const pd=new Map(),pkd=new Map();
+  for(const r of rows){
+    if(r.pk&&inRange(r.pkD)&&grpOk(r.pkL))pd.set(r.pkD,(pd.get(r.pkD)||0)+1);
+    if(r.pi&&r.pi!==NOT_ASKED&&inRange(r.piD)&&grpOk(r.piL))pkd.set(r.piD,(pkd.get(r.piD)||0)+1);
+  }
+  const shownDays=days.filter(d=>pd.has(d)||pkd.has(d));CUR.days=shownDays;
+  $("#cDay").innerHTML=dayChart(shownDays,shownDays.map(d=>pd.get(d)||0),shownDays.map(d=>pkd.get(d)||0));
+
+  const hrs=new Array(24).fill(0);for(const o of pack)o.hours.forEach((v,i)=>hrs[i]+=v);
+  $("#cHour").innerHTML=hourChart(hrs,"var(--pack)",packDays.size);
+
+  const tm=new Map();for(const o of pack)for(const [t,n] of o.types)tm.set(t,(tm.get(t)||0)+n);
+  $("#typeMix").innerHTML=typeList(tm,"var(--pack)")||'<span class="muted">Keine Daten im Filter.</span>';
+
+  renderMatrix();
+
+  // Datenqualität
+  const storn=DATA.rows.filter(r=>r.storno).length;
+  const noTempo=pack.reduce((s,o)=>s+[...o.days.keys()].filter(d=>{const N=NET.get(o.name+"|"+d);return !N||N.net<0.5;}).length,0);
+  const naTop=[...packAll].filter(o=>o.ls>=50).sort((x,y)=>y.naRate-x.naRate).slice(0,5);
+  $("#dq").innerHTML=[
+    ["Zeilen in der Liste",fmt(DATA.rows.length)],
+    ["Storniert (nicht gezählt)",fmt(storn)],
+    ["Ohne Packer (Spalte Y leer)",fmt(noPacker)],
+    ["Pick „Nicht abgefragt!“",fmt(notAsked)],
+    ["Gepackt ohne Picker",fmt(noPicker)],
+    ["Packer-Tage ohne Tempo-Wert",fmt(noTempo)]
+  ].map(([k,v])=>`<div class="it"><span>${k}</span><span class="num">${v}</span></div>`).join("")+
+  `<h4>Höchste Quote ohne Pick-Scan</h4>`+
+  (naTop.length?naTop.map(o=>`<div class="it"><span>${esc(o.name)}${o.leih?'<span class="lt">Leih</span>':""}</span><span class="num ${o.naRate>naTeam*1.25?"warnc":""}">${pct(o.na,o.ls)} <span class="dim">(${fmt(o.na)})</span></span></div>`).join(""):'<div class="it"><span>Keine Packer mit mindestens 50 LS.</span><span></span></div>')+
+  `<div class="it"><span>Team-Durchschnitt</span><span class="num">${fmt1(naTeam*100)} %</span></div>`;
+
+  renderQA(rows,pack,pick);
+
+  $("#foot").innerHTML=
+    `<span>Ø LS/Std netto: Lieferscheine geteilt durch die Arbeitszeit des Tages. Lücken zwischen zwei Pack-Scans über ${fmt(SET.pauseMin)} Minuten gelten als Pause und werden abgezogen. Tage mit weniger als 30 Minuten Netto-Zeit fließen nicht ins Tempo ein. Brutto = erster bis letzter Scan.</span>`+
+    `<span>Punkte je LS = Gewicht des Auftragstyps + ${fmt1(SET.wPak)} je weiteres Paket + ${fmt1(SET.wPos)} je weitere Position. Ampel: grün ab ${fmt1(+SET.target)} LS/Std netto, gelb ab 85 % davon. Stornierte Lieferscheine werden nie gezählt.</span>`;
+  $("#btnExp").disabled=false;
+}
+function kpi(c,k,v,s,raw){return `<div class="kpi"><span class="k"><i class="dot" style="background:var(--${c})"></i>${k}</span><span class="v">${raw?v:esc(v)}</span><span class="s" title="${esc(s)}">${esc(s)}</span></div>`;}
+const snapLabel=s=>`${s.mandant||"Liste"} ${dShort(s.minDay)}–${dShort(s.maxDay)}`;
+
+const COLS={
+  pack:[["rank","#"],["name","Mitarbeiter","l"],["qlv","Quali"],["ls","LS"],["pak","Pakete"],["teile","Teile"],["score","Punkte"],["nDays","Tage"],["perDay","Ø LS/Tag"],["perHour","Ø LS/Std"],["ptsHour","Pkt/Std"],["trend","Trend"],["naRate","o. Pick-Scan"],["share","Anteil"]],
+  pick:[["rank","#"],["name","Mitarbeiter","l"],["qlv","Quali"],["ls","LS"],["teile","Teile"],["pos","Pos."],["nDays","Tage"],["perDay","Ø LS/Tag"],["trend","Trend"],["share","Anteil"]]
+};
+let LAST={pack:[],pick:[]};
+function renderTable(sel,list,role,total){
+  const sort=role==="pack"?ST.sortPack:ST.sortPick;
+  const byLS=[...list].sort((a,b)=>b.ls-a.ls);byLS.forEach((o,i)=>o.rank=i+1);
+  const key=sort.k==="share"||sort.k==="rank"?"ls":sort.k;
+  let arr=[...list].sort((a,b)=>{
+    let x=a[key],y=b[key];
+    if(key==="name")return sort.asc?x.localeCompare(y,"de"):y.localeCompare(x,"de");
+    x=x==null?-Infinity:x;y=y==null?-Infinity:y;
+    let r=sort.asc?x-y:y-x;if(sort.k==="rank")r=-r;if(isNaN(r))r=0;return r||b.ls-a.ls;
+  });
+  if(ST.q){const q=ST.q.toLowerCase();arr=arr.filter(o=>o.name.toLowerCase().includes(q));}
+  LAST[role]=arr;
+  const max=byLS.length?byLS[0].ls:1;
+  const cols=COLS[role].filter(([k])=>k!=="qlv"||QUALI).filter(([k])=>k!=="trend"||CUR.snap);
+  const head="<thead><tr>"+cols.map(([k,l,c])=>`<th data-k="${k}" class="${c==="l"?"l":""} ${sort.k===k?"sorted"+(sort.asc?" asc":""):""}">${l}</th>`).join("")+"</tr></thead>";
+  const body=arr.length?arr.map((o,i)=>"<tr data-i=\""+i+"\" class=\""+(o.rank<=3?"top3":"")+"\">"+cols.map(([k])=>{
+    switch(k){
+      case "rank":return `<td class="rank">${o.rank}</td>`;
+      case "name":return `<td class="l name" title="${esc(o.name)}">${esc(o.name)}${o.leih?'<span class="lt">Leih</span>':""}</td>`;
+      case "qlv":return `<td>${o.qlv==null?'<span class="dim" title="keine Zuordnung zur Quali-Matrix">·</span>':qBadge(o.qlv)}</td>`;
+      case "perDay":return `<td class="n">${fmt1(o.perDay)}</td>`;
+      case "perHour":{const a=amp(o.perHour);return `<td class="n" title="${fmt(o.rLS)} LS in ${fmt1(o.rH)} Std netto · brutto ${fmt1(o.bruttoHour)}${+SET.target&&o.perHour!=null?" · "+Math.round(o.perHour/SET.target*100)+" % vom Ziel":""}">${a?`<i class="amp ${a}"></i>`:""}${fmt1(o.perHour)}</td>`;}
+      case "ptsHour":return `<td class="n">${fmt1(o.ptsHour)}</td>`;
+      case "score":return `<td class="n">${fmt(o.score)}</td>`;
+      case "trend":return `<td>${trendHtml(role==="pack"?o.perHour:o.perDay,o.bVal,role==="pack"?"LS/Std":"LS/Tag")}</td>`;
+      case "naRate":return `<td class="n ${o.ls>=50&&o.naRate>CUR.naTeam*1.25?"warnc":""}" title="${fmt(o.na)} von ${fmt(o.ls)} LS ohne Pick-Scan">${fmt1(o.naRate*100)} %</td>`;
+      case "share":return `<td><div class="share"><span class="num muted">${pct(o.ls,total)}</span><span class="bar"><i style="width:${(o.ls/max*100).toFixed(1)}%"></i></span></div></td>`;
+      default:return `<td class="n">${fmt(o[k])}</td>`;
+    }
+  }).join("")+"</tr>").join(""):`<tr class="empty-row"><td colspan="${cols.length}">Keine Einträge im aktuellen Filter.</td></tr>`;
+  const t=$(sel);t.innerHTML=head+"<tbody>"+body+"</tbody>";
+  t.querySelectorAll("th").forEach(th=>th.onclick=()=>{
+    const k=th.dataset.k;
+    if(sort.k===k)sort.asc=!sort.asc;else{sort.k=k;sort.asc=(k==="name"||k==="rank");}
+    render();
+  });
+  t.querySelectorAll("tbody tr[data-i]").forEach(tr=>tr.onclick=()=>openDetail(LAST[role][+tr.dataset.i],role,total));
+}
+
+/* ---------- Matrix ---------- */
+function matrixData(role){
+  const list=[...(role==="pack"?CUR.pack:CUR.pick)].sort((a,b)=>b.ls-a.ls).filter(o=>!ST.q||o.name.toLowerCase().includes(ST.q.toLowerCase()));
+  return {list,days:CUR.days};
+}
+function renderMatrix(){
+  const role=ST.mx;const {list,days}=matrixData(role);
+  if(!list.length||!days.length){$("#mx").innerHTML='<div class="pbody muted">Keine Daten im Filter.</div>';return;}
+  let max=1;for(const o of list)for(const d of days){const v=o.days.get(d);if(v&&v.n>max)max=v.n;}
+  const rgb=role==="pack"?"69,196,156":"227,164,67";
+  let h='<table class="mx"><thead><tr><th class="nm">Mitarbeiter</th>';
+  for(const d of days){const w=wday(d);h+=`<th class="${w===1?"we":""}">${WD[w]}<br>${d.slice(8)}.${d.slice(5,7)}</th>`;}
+  h+='<th class="sum" style="padding:0 10px">Summe</th></tr></thead><tbody>';
+  for(const o of list){
+    h+=`<tr><td class="nm" title="${esc(o.name)}">${esc(o.name)}${o.leih?'<span class="lt">Leih</span>':""}</td>`;
+    for(const d of days){
+      const v=o.days.get(d);const n=v?v.n:0;const w=wday(d);
+      if(!n){h+=`<td class="c ${w===1?"we":""}"></td>`;continue;}
+      const al=0.12+0.83*n/max;
+      h+=`<td class="c ${w===1?"we":""} ${al>0.55?"hi":""}" style="background:rgba(${rgb},${al.toFixed(2)})" data-tip="${esc(o.name)}|${dayLong(d)}|${fmt(n)} LS">${n}</td>`;
+    }
+    h+=`<td class="sum">${fmt(o.ls)}</td></tr>`;
+  }
+  $("#mx").innerHTML=h+"</tbody></table>";
+}
+$("#mxSeg").querySelectorAll("button").forEach(b=>b.onclick=()=>{ST.mx=b.dataset.m;$("#mxSeg").querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));if(DATA)renderMatrix();});
+
+/* ---------- Quali-Abgleich ---------- */
+function renderQA(rows,pack,pick){
+  const P=$("#qaPanel");
+  if(!QUALI){
+    P.hidden=false;
+    $("#qa").innerHTML=`<div class="none">Keine Qualifikationsmatrix gefunden. Der Abgleich funktioniert, wenn diese App unter loyalsoldier187.github.io läuft und die Quali-Matrix im selben Browser schon einmal geöffnet wurde.</div>`;
+    return;
+  }
+  const line=(o,area)=>`<div class="it"><span>${esc(o.name)} <span class="dim">· ${fmt(o.ls)} LS</span></span>${qBadge(QUALI.lvl(o.qp,area))}</div>`;
+  const pk=pack.filter(o=>o.qp&&QUALI.lvl(o.qp,"Packen")<=1).sort((a,b)=>b.ls-a.ls);
+  const pc=pick.filter(o=>o.qp&&QUALI.lvl(o.qp,"Picken")<=1).sort((a,b)=>b.ls-a.ls);
+  // Personen der Matrix, die einem Konto in der Liste zugeordnet sind
+  const names=new Set();for(const r of DATA.rows){if(r.pk)names.add(r.pk);if(r.pi&&r.pi!==NOT_ASKED)names.add(r.pi);}
+  const linked=new Map();for(const n of names){const q=qualiOf(n);if(q){if(!linked.has(q))linked.set(q,[]);linked.get(q).push(n);}}
+  const packedBy=new Set(pack.map(o=>o.qp).filter(Boolean));
+  const idle=[...linked.keys()].filter(q=>QUALI.lvl(q,"Packen")>=3&&!packedBy.has(q));
+  const unlinked=QUALI.people.filter(q=>!linked.has(q));
+  const unmatched=[...names].filter(n=>!isLeihAcc(n)&&!qualiOf(n)).length;
+  let h=`<h4 style="margin-top:0">Packt, laut Matrix nicht freigegeben</h4>`+(pk.length?pk.map(o=>line(o,"Packen")).join(""):'<div class="none">Keine Auffälligkeit.</div>');
+  h+=`<h4>Pickt, laut Matrix nicht freigegeben</h4>`+(pc.length?pc.map(o=>line(o,"Picken")).join(""):'<div class="none">Keine Auffälligkeit.</div>');
+  h+=`<h4>Packen freigegeben, im Zeitraum keine LS</h4>`+(idle.length?idle.map(q=>`<div class="it"><span>${esc(q)}</span>${qBadge(QUALI.lvl(q,"Packen"))}</div>`).join(""):'<div class="none">Keine.</div>');
+  h+=`<h4>Zuordnung</h4><div class="it"><span>Matrix-Personen ohne Konto in dieser Liste</span><span class="num" title="${esc(unlinked.join(" · "))}">${unlinked.length} / ${QUALI.people.length}</span></div>`+
+     `<div class="it"><span>Konten ohne Matrix-Person (ohne Leih)</span><span class="num">${unmatched}</span></div>`+
+     `<div class="it"><span class="dim">Zuordnungen änderst du unter Einstellungen.</span><span></span></div>`;
+  $("#qa").innerHTML=h;
+}
+
+/* ---------- Charts ---------- */
+function niceMax(v){if(v<=0)return 1;const p=Math.pow(10,Math.floor(Math.log10(v)));for(const m of [1,1.5,2,2.5,3,4,5,6,8,10])if(m*p>=v)return m*p;return 10*p;}
+function dayChart(days,a,b){
+  if(!days.length)return '<span class="muted">Keine Daten im Filter.</span>';
+  const W=1000,H=270,L=46,R=12,T=14,B=40;
+  const max=niceMax(Math.max(...a,...b));
+  const iw=W-L-R,ih=H-T-B,step=iw/days.length,bw=Math.max(2,Math.min(26,step*0.66));
+  const y=v=>T+ih-v/max*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Lieferscheine pro Tag">`;
+  for(let i=0;i<=4;i++){const v=max*i/4,yy=y(v);s+=`<line class="gridl" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text class="axis" x="${L-6}" y="${yy+3}" text-anchor="end">${fmt(v)}</text>`;}
+  const every=Math.ceil(days.length/(W/48));
+  days.forEach((d,i)=>{
+    const cx=L+step*i+step/2;
+    s+=`<rect x="${cx-bw/2}" y="${y(a[i])}" width="${bw}" height="${Math.max(0,T+ih-y(a[i]))}" fill="var(--pack)" rx="1.5" opacity=".9"/>`;
+    if(i%every===0)s+=`<text class="axis" x="${cx}" y="${H-B+16}" text-anchor="middle">${dayLabel(d)}</text>`;
+    s+=`<rect x="${L+step*i}" y="${T}" width="${step}" height="${ih}" fill="transparent" data-tip="${dayLong(d)}|gepackt ${fmt(a[i])}|gepickt ${fmt(b[i])}"/>`;
+  });
+  const pts=days.map((d,i)=>`${(L+step*i+step/2).toFixed(1)},${y(b[i]).toFixed(1)}`).join(" ");
+  s+=`<polyline points="${pts}" fill="none" stroke="var(--pick)" stroke-width="2" stroke-linejoin="round" pointer-events="none"/>`;
+  days.forEach((d,i)=>{s+=`<circle cx="${(L+step*i+step/2).toFixed(1)}" cy="${y(b[i]).toFixed(1)}" r="2.6" fill="var(--pick)" pointer-events="none"/>`;});
+  s+=`<line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" stroke="var(--line2)"/>`;
+  return s+"</svg>";
+}
+function hourChart(hrs,color,nDays,W=1000,H=220){
+  const lo=hrs.findIndex(v=>v>0),hi=23-[...hrs].reverse().findIndex(v=>v>0);
+  if(lo<0)return '<span class="muted">Keine Zeitstempel im Filter.</span>';
+  const n=hi-lo+1;
+  const L=W<700?34:46,R=12,T=14,B=34,iw=W-L-R,ih=H-T-B,step=iw/n,bw=step*0.7;
+  const max=niceMax(Math.max(...hrs));const y=v=>T+ih-v/max*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Lieferscheine pro Stunde">`;
+  for(let i=0;i<=4;i++){const v=max*i/4,yy=y(v);s+=`<line class="gridl" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text class="axis" x="${L-6}" y="${yy+3}" text-anchor="end">${fmt(v)}</text>`;}
+  for(let h=lo;h<=hi;h++){
+    const i=h-lo,cx=L+step*i+step/2,v=hrs[h],hh=String(h).padStart(2,"0");
+    s+=`<rect x="${cx-bw/2}" y="${y(v)}" width="${bw}" height="${Math.max(0,T+ih-y(v))}" fill="${color}" rx="2" opacity=".9"/>`;
+    s+=`<text class="axis" x="${cx}" y="${H-B+16}" text-anchor="middle">${hh}</text>`;
+    s+=`<rect x="${L+step*i}" y="${T}" width="${step}" height="${ih}" fill="transparent" data-tip="${hh}:00–${hh}:59|${fmt(v)} LS gesamt${nDays?"|Ø "+fmt1(v/nDays)+" pro Arbeitstag":""}"/>`;
+  }
+  s+=`<line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" stroke="var(--line2)"/>`;
+  return s+"</svg>";
+}
+function typeList(map,color){
+  const arr=[...map.entries()].sort((a,b)=>b[1]-a[1]);if(!arr.length)return "";
+  const max=arr[0][1];
+  return arr.map(([t,n])=>`<div class="tr"><span title="${esc(t)}" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t)}</span><span class="bar"><i style="width:${(n/max*100).toFixed(1)}%;background:${color}"></i></span><span>${fmt(n)}</span></div>`).join("");
+}
+
+/* Tooltip */
+const tip=$("#tip");
+document.addEventListener("mousemove",e=>{
+  const t=e.target.closest&&e.target.closest("[data-tip]");
+  if(!t){tip.hidden=true;return;}
+  const [h,...lines]=t.getAttribute("data-tip").split("|");
+  tip.innerHTML=`<div class="t">${esc(h)}</div>`+lines.map(l=>`<div>${esc(l)}</div>`).join("");
+  tip.hidden=false;
+  const r=tip.getBoundingClientRect();
+  let x=e.clientX+14,y=e.clientY+14;
+  if(x+r.width>innerWidth-8)x=e.clientX-r.width-14;
+  if(y+r.height>innerHeight-8)y=e.clientY-r.height-14;
+  tip.style.left=x+"px";tip.style.top=y+"px";
+});
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2200);}
+
+/* ---------- Detail ---------- */
+function openDrawer(html){const dr=$("#drawer");dr.innerHTML=html;dr.hidden=false;$("#scrim").hidden=false;const x=dr.querySelector(".x");if(x){x.onclick=closeDrawer;x.focus();}}
+function closeDrawer(){$("#drawer").hidden=true;$("#scrim").hidden=true;tip.hidden=true;}
+$("#scrim").onclick=closeDrawer;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeDrawer();});
+
+function openDetail(o,role,total){
+  if(!o)return;
+  const c=role==="pack"?"pack":"pick",pack=role==="pack";
+  const days=[...o.days.keys()].sort();
+  const vals=days.map(d=>o.days.get(d).n);
+  const best=days.reduce((b,d)=>!b||o.days.get(d).n>o.days.get(b).n?d:b,null);
+  const a=pack?amp(o.perHour):"";
+  const k=[
+    kpi(c,"Lieferscheine",fmt(o.ls),pct(o.ls,total)+" vom Team"),
+    kpi(c,"Arbeitstage",fmt(o.nDays),"Ø "+fmt1(o.perDay)+" LS/Tag"),
+    pack?kpi(c,"Ø LS / Std netto",(a?`<i class="amp ${a}"></i>`:"")+fmt1(o.perHour),fmt(o.rLS)+" LS in "+fmt1(o.rH)+" Std · brutto "+fmt1(o.bruttoHour),true):kpi(c,"Positionen",fmt(o.pos),"DivEinzelteile"),
+    pack?kpi(c,"Punkte",fmt(o.score),"Ø "+fmt1(o.ptsHour)+" Punkte/Std"):kpi(c,"Einzelteile",fmt(o.teile),"Ø "+fmt1(o.teile/o.ls)+" je LS"),
+    pack?kpi(c,"Pakete · Teile",fmt(o.pak),fmt(o.teile)+" Einzelteile"):kpi(c,"Ø Pos. je LS",fmt1(o.pos/o.ls),""),
+    pack?kpi(c,"Ohne Pick-Scan",fmt1(o.naRate*100)+" %",fmt(o.na)+" LS · Team "+fmt1(CUR.naTeam*100)+" %"):kpi(c,"Bester Tag",best?fmt(o.days.get(best).n):"–",best?dayLong(best):""),
+  ];
+  if(CUR.snap)k.push(kpi(c,"Trend",trendHtml(pack?o.perHour:o.perDay,o.bVal,pack?"LS/Std":"LS/Tag"),"gegen "+snapLabel(CUR.snap),true));
+  if(pack)k.push(kpi(c,"Bester Tag",best?fmt(o.days.get(best).n):"–",best?dayLong(best):""));
+  if(+SET.target&&pack)k.push(kpi(c,"Zielerfüllung",o.perHour!=null?Math.round(o.perHour/SET.target*100)+" %":"–","Ziel "+fmt1(+SET.target)+" LS/Std"));
+  const W=520,H=170,L=34,R=6,T=8,B=26,iw=W-L-R,ih=H-T-B,step=iw/Math.max(1,days.length),bw=Math.max(2,Math.min(18,step*.7));
+  const max=niceMax(Math.max(1,...vals));const y=v=>T+ih-v/max*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}">`;
+  for(let i=0;i<=2;i++){const v=max*i/2,yy=y(v);s+=`<line class="gridl" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text class="axis" x="${L-5}" y="${yy+3}" text-anchor="end">${fmt(v)}</text>`;}
+  const every=Math.ceil(days.length/9);
+  days.forEach((d,i)=>{const cx=L+step*i+step/2,dd=o.days.get(d);
+    s+=`<rect x="${cx-bw/2}" y="${y(dd.n)}" width="${bw}" height="${T+ih-y(dd.n)}" fill="var(--${c})" rx="1.5"/>`;
+    if(i%every===0)s+=`<text class="axis" x="${cx}" y="${H-8}" text-anchor="middle">${dayLabel(d)}</text>`;
+    const N=pack?NET.get(o.name+"|"+d):null;
+    const extra=N?"|"+hm(N.min)+"–"+hm(N.max)+" · netto "+fmt1(N.net)+" Std"+(N.net>=0.5?"|"+fmt1(dd.n/N.net)+" LS/Std":""):"";
+    s+=`<rect x="${L+step*i}" y="${T}" width="${step}" height="${ih}" fill="transparent" data-tip="${dayLong(d)}|${fmt(dd.n)} LS${extra}"/>`;
+  });
+  s+="</svg>";
+  let q="";
+  if(QUALI){
+    q=o.qp?`<div class="sect"><h4>Qualifikationen · ${esc(o.qp)}${QUALI.pos(o.qp)?" · "+esc(QUALI.pos(o.qp)):""}</h4><div class="qgrid">${QAREAS.map(ar=>`<div><span>${ar}</span>${qBadge(QUALI.lvl(o.qp,ar))}</div>`).join("")}</div></div>`
+          :`<div class="sect"><h4>Qualifikationen</h4><p>Keine Person aus der Quali-Matrix zugeordnet. Zuordnen kannst du unter Einstellungen.</p></div>`;
+  }
+  const hours=pack&&o.hours.some(v=>v)?`<div class="sect"><h4>Stundenprofil</h4>${hourChart(o.hours,`var(--${c})`,o.nDays,520,170)}</div>`:"";
+  openDrawer(`<div class="dh"><span class="tag ${c}">${pack?"Packer · Y":"Picker · W"}</span>${o.leih?'<span class="tag leih">Leih</span>':""}<h3 title="${esc(o.name)}">${esc(o.name)}</h3><button class="x" aria-label="Schließen">×</button></div>
+  <div class="db"><div class="dk">${k.join("")}</div>
+  <div class="sect"><h4>Lieferscheine pro Tag</h4>${s}</div>${hours}${q}
+  <div class="sect"><h4>Auftragstypen</h4><div class="typelist">${typeList(o.types,`var(--${c})`)}</div></div></div>`);
+}
+function hm(t){const h=Math.floor(t),m=Math.floor((t-h)*60);return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");}
+
+/* ---------- Einstellungen ---------- */
+function openSettings(){
+  const types=[...new Set([...(DATA?Object.keys(DATA.typeCounts):[]),...Object.keys(SET.wType)])].sort((a,b)=>(DATA&&DATA.typeCounts[b]||0)-(DATA&&DATA.typeCounts[a]||0));
+  const leihAccs=DATA?[...new Set(DATA.rows.flatMap(r=>[r.pk0,r.pi0]).filter(n=>n&&n!==NOT_ASKED&&isLeihAcc(n)))].sort((a,b)=>a.localeCompare(b,"de",{numeric:true})):[];
+  SET.leihMap.forEach(m=>{if(m.acc&&!leihAccs.includes(m.acc))leihAccs.push(m.acc);});
+  const accOpts=sel=>leihAccs.map(a=>`<option ${a===sel?"selected":""}>${esc(a)}</option>`).join("");
+  const hist=loadHist();
+  let qsec="";
+  if(QUALI&&DATA){
+    const names=[...new Set(DATA.rows.flatMap(r=>[r.pk0,r.pi0]).filter(n=>n&&n!==NOT_ASKED&&!isLeihAcc(n)))].sort((a,b)=>a.localeCompare(b,"de"));
+    qsec=`<p>Jedes Konto aus der Liste wird automatisch einer Person aus deiner Quali-Matrix zugeordnet, wenn Vor- und Nachname passen. Wo das nicht klappt oder falsch ist, wählst du hier selbst.</p>`+
+      names.map(n=>{const has=Object.prototype.hasOwnProperty.call(SET.qualiMap,n);const auto=autoMatch(n);const cur=has?SET.qualiMap[n]:"__auto";
+        return `<div class="qmap"><span title="${esc(n)}">${esc(n)}</span><select data-qm="${esc(n)}"><option value="__auto" ${cur==="__auto"?"selected":""}>automatisch: ${esc(auto||"keine")}</option><option value="" ${cur===""?"selected":""}>keine Zuordnung</option>${QUALI.people.map(p=>`<option ${p===cur?"selected":""}>${esc(p)}</option>`).join("")}</select></div>`;}).join("");
+  }else if(!QUALI){
+    qsec=`<p>Keine Qualifikationsmatrix in diesem Browser gefunden. Die Verknüpfung funktioniert, wenn diese App unter loyalsoldier187.github.io läuft und die Quali-Matrix dort schon geöffnet wurde. Gelesen werden nur Qualifikationen und Positionen.</p>`;
+  }else qsec=`<p>Lade zuerst eine Liste, dann kannst du die Konten zuordnen.</p>`;
+
+  openDrawer(`<div class="dh"><h3>Einstellungen</h3><button class="x" aria-label="Schließen">×</button></div><div class="db">
+  <div class="sect"><h4>Tempo &amp; Ziel</h4>
+    <div class="frow"><label for="sTarget">Ziel LS pro Stunde (netto)<span class="hint">grün ab Ziel, gelb ab 85 %, sonst rot</span></label><input type="number" id="sTarget" min="0" step="0.5" value="${SET.target}"></div>
+    <div class="frow"><label for="sPause">Pausengrenze in Minuten<span class="hint">längere Lücken zwischen zwei Scans zählen als Pause</span></label><input type="number" id="sPause" min="1" step="1" value="${SET.pauseMin}"></div>
+  </div>
+  <div class="sect"><h4>Gewichtung für Punkte</h4>
+    <p>Jeder Lieferschein bekommt das Gewicht seines Auftragstyps, dazu Zuschläge für jedes weitere Paket und jede weitere Position. Startwerte: alle Typen 1, Paket 0,5, Position 0,25.</p>
+    <div class="frow"><label for="sPak">je weiteres Paket</label><input type="number" id="sPak" min="0" step="0.05" value="${SET.wPak}"></div>
+    <div class="frow"><label for="sPos">je weitere Position</label><input type="number" id="sPos" min="0" step="0.05" value="${SET.wPos}"></div>
+    ${types.map((t,i)=>`<div class="frow"><label for="wt${i}">${esc(t)}${DATA&&DATA.typeCounts[t]?`<span class="hint">${fmt(DATA.typeCounts[t])} LS in dieser Liste</span>`:""}</label><input type="number" id="wt${i}" data-wt="${esc(t)}" min="0" step="0.1" value="${wType(t)}"></div>`).join("")}
+  </div>
+  <div class="sect"><h4>Leihpersonal</h4>
+    <p>Konten „Leiharbeiter1–9“ zählen automatisch als Leih. Weitere Leih-Konten trägst du hier ein, mit Komma getrennt.</p>
+    <div class="frow" style="grid-template-columns:1fr"><input type="text" id="sLeihX" placeholder="z. B. Handling Gesamt" value="${esc(SET.leihExtra.join(", "))}"></div>
+    <p style="margin-top:12px">Zuordnung Konto → echter Name für einen Zeitraum. Leere Datumsfelder gelten unbegrenzt.</p>
+    <div class="lmap h"><span>Konto</span><span>Name</span><span>von</span><span>bis</span><span></span></div>
+    <div id="lmaps">${SET.leihMap.map((m,i)=>`<div class="lmap" data-i="${i}"><select data-f="acc" aria-label="Konto">${accOpts(m.acc)}</select><input type="text" data-f="name" value="${esc(m.name||"")}" placeholder="Name" aria-label="Name"><input type="date" data-f="from" value="${m.from||""}" aria-label="von"><input type="date" data-f="to" value="${m.to||""}" aria-label="bis"><button class="x" data-del="${i}" aria-label="Entfernen" style="width:34px;height:34px;font-size:16px">×</button></div>`).join("")}</div>
+    <button class="btn sm" id="lAdd" ${leihAccs.length?"":"disabled"}>+ Zuordnung</button>
+  </div>
+  <div class="sect"><h4>Quali-Matrix</h4>${qsec}</div>
+  <div class="sect"><h4>Gespeicherte Listen für den Vergleich</h4>
+    <p>Von jeder geladenen Liste bleibt eine kleine Zusammenfassung in diesem Browser (höchstens 10). Die Excel-Datei selbst wird nicht gespeichert.</p>
+    ${hist.length?hist.map(s=>`<div class="hist"><div class="hm"><div>${esc(snapLabel(s))}</div><div>${esc(s.file||"")} · ${fmt(s.n)} Zeilen · gespeichert ${new Date(s.savedAt).toLocaleDateString("de-DE")}</div></div><button class="btn sm danger" data-hdel="${esc(s.id)}">Löschen</button></div>`).join(""):'<p class="dim">Noch keine Liste gespeichert.</p>'}
+  </div></div>`);
+
+  const dr=$("#drawer");
+  const apply=()=>{saveSettings();if(DATA){QMATCH=new Map();prepare();storeSnapshot();fillBase();render();}};
+  dr.querySelector("#sTarget").onchange=e=>{SET.target=Math.max(0,+e.target.value||0);apply();};
+  dr.querySelector("#sPause").onchange=e=>{SET.pauseMin=Math.max(1,+e.target.value||20);apply();};
+  dr.querySelector("#sPak").onchange=e=>{SET.wPak=Math.max(0,+e.target.value||0);apply();};
+  dr.querySelector("#sPos").onchange=e=>{SET.wPos=Math.max(0,+e.target.value||0);apply();};
+  dr.querySelectorAll("[data-wt]").forEach(inp=>inp.onchange=()=>{const v=+inp.value;SET.wType[inp.dataset.wt]=isNaN(v)?1:Math.max(0,v);apply();});
+  dr.querySelector("#sLeihX").onchange=e=>{SET.leihExtra=e.target.value.split(",").map(s=>s.trim()).filter(Boolean);apply();openSettings();};
+  dr.querySelectorAll(".lmap[data-i]").forEach(row=>{
+    const i=+row.dataset.i;
+    row.querySelectorAll("[data-f]").forEach(inp=>inp.onchange=()=>{SET.leihMap[i][inp.dataset.f]=inp.value;apply();});
+  });
+  dr.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{SET.leihMap.splice(+b.dataset.del,1);apply();openSettings();});
+  const la=dr.querySelector("#lAdd");if(la)la.onclick=()=>{SET.leihMap.push({acc:leihAccs[0]||"",name:"",from:"",to:""});saveSettings();openSettings();};
+  dr.querySelectorAll("[data-qm]").forEach(s=>s.onchange=()=>{const n=s.dataset.qm;if(s.value==="__auto")delete SET.qualiMap[n];else SET.qualiMap[n]=s.value;apply();});
+  dr.querySelectorAll("[data-hdel]").forEach(b=>b.onclick=()=>{saveHist(loadHist().filter(s=>s.id!==b.dataset.hdel));if(ST.base===b.dataset.hdel)ST.base="";if(DATA){fillBase(true);render();}openSettings();});
+}
+$("#btnSet").onclick=openSettings;
+
+/* ---------- Export ---------- */
+function exportXlsx(){
+  if(!CUR||typeof XLSX==="undefined")return;
+  const wb=XLSX.utils.book_new();
+  const types=[...ST.types].join(", ");
+  const ov=[["Pack- & Pick-KPI"],[],["Mandant",DATA.mandant],["Datei",DATA.file],["Zeitraum",dShort(ST.from)+" – "+dShort(ST.to)],["Auftragstypen",types],["Personal",{all:"Alle",stamm:"Stamm",leih:"Leih"}[ST.grp]],["Vergleich mit",CUR.snap?snapLabel(CUR.snap):"–"],[],
+    ["Kennzahl","Wert"],["LS gepackt",CUR.totLS],["Arbeitstage",CUR.packDays],["Pakete",CUR.totPak],["Einzelteile",CUR.totTeile],["Punkte gewichtet",r1(CUR.totSc)],["Ø Punkte/Std",r1(CUR.ptsH)],
+    ["Packer aktiv",CUR.pack.length],["Ø LS/Std netto",r1(CUR.teamH)],["Ø LS/Std brutto",r1(CUR.bruttoH)],["Ziel LS/Std",+SET.target],["Leih-Anteil %",CUR.allLS?r1(CUR.leihLS/CUR.allLS*100):null],
+    ["LS gepickt (namentlich)",CUR.totPick],["Picker aktiv",CUR.pick.length],["Pick nicht abgefragt",CUR.notAsked],["Gepackt ohne Picker",CUR.noPicker],["Ohne Packer",CUR.noPacker],["Quote ohne Pick-Scan Team %",r1(CUR.naTeam*100)],[],
+    ["Netto-Tempo: Lücken über "+SET.pauseMin+" Min. zwischen zwei Scans gelten als Pause. Punkte je LS = Typ-Gewicht + "+SET.wPak+" je weiteres Paket + "+SET.wPos+" je weitere Position."]];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ov),"Übersicht");
+  const qn=o=>o.qlv==null?"":QLV[o.qlv][1];
+  const pk=[...CUR.pack].sort((a,b)=>b.ls-a.ls);
+  const ph=["Rang","Mitarbeiter","Leih","Quali Packen","LS","Pakete","Einzelteile","Positionen","Punkte","Tage","Ø LS/Tag","Ø LS/Std netto","Ø LS/Std brutto","Punkte/Std","Zielerfüllung %","Trend %","ohne Pick-Scan %","Anteil %"];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([ph,...pk.map((o,i)=>[i+1,o.name,o.leih?"ja":"nein",qn(o),o.ls,o.pak,o.teile,o.pos,r1(o.score),o.nDays,r1(o.perDay),r1(o.perHour),r1(o.bruttoHour),r1(o.ptsHour),(+SET.target&&o.perHour!=null)?Math.round(o.perHour/SET.target*100):null,o.trend==null?null:Math.round(o.trend*100),r1(o.naRate*100),CUR.totLS?r1(o.ls/CUR.totLS*100):null])]),"Packer");
+  const pc=[...CUR.pick].sort((a,b)=>b.ls-a.ls);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([["Rang","Mitarbeiter","Leih","Quali Picken","LS","Einzelteile","Positionen","Tage","Ø LS/Tag","Trend %","Anteil %"],...pc.map((o,i)=>[i+1,o.name,o.leih?"ja":"nein",qn(o),o.ls,o.teile,o.pos,o.nDays,r1(o.perDay),o.trend==null?null:Math.round(o.trend*100),CUR.totPick?r1(o.ls/CUR.totPick*100):null])]),"Picker");
+  for(const role of ["pack","pick"]){
+    const list=[...(role==="pack"?CUR.pack:CUR.pick)].sort((a,b)=>b.ls-a.ls);
+    const aoa=[["Mitarbeiter",...CUR.days.map(d=>WD[wday(d)]+" "+dayLabel(d)),"Summe"],...list.map(o=>[o.name,...CUR.days.map(d=>{const v=o.days.get(d);return v?v.n:null;}),o.ls])];
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(aoa),role==="pack"?"Matrix Packen":"Matrix Picken");
+  }
+  const safe=s=>String(s||"").replace(/[^\wäöüÄÖÜß-]+/g,"_");
+  XLSX.writeFile(wb,`PackPick_${safe(DATA.mandant)}_${ST.from}_${ST.to}.xlsx`);
+  toast("Excel-Datei erstellt");
+}
+$("#btnExp").onclick=exportXlsx;
+
+/* ---------- Filter-UI ---------- */
+const mx=(a,b)=>a>b?a:b,mn=(a,b)=>a<b?a:b;
+function buildFilters(){
+  $("#from").min=$("#to").min=DATA.minDay;$("#from").max=$("#to").max=DATA.maxDay;
+  ST.from=DATA.minDay;ST.to=DATA.maxDay;$("#from").value=ST.from;$("#to").value=ST.to;
+  const months=[];{let d=DATA.minDay.slice(0,7);const end=DATA.maxDay.slice(0,7);let g=0;while(d<=end&&g<36){months.push(d);let [y,m]=d.split("-").map(Number);m++;if(m>12){m=1;y++;}d=y+"-"+String(m).padStart(2,"0");g++;}}
+  const q=[["Gesamt",DATA.minDay,DATA.maxDay]];
+  if(months.length>1)months.forEach(m=>{const [y,mm]=m.split("-").map(Number);const last=new Date(Date.UTC(y,mm,0)).toISOString().slice(0,10);q.push([MON[mm-1]+" "+y,mx(m+"-01",DATA.minDay),mn(last,DATA.maxDay)]);});
+  q.push(["Letzte 7 Tage",mx(addDay(DATA.maxDay,-6),DATA.minDay),DATA.maxDay]);
+  q.push(["Letzter Tag",DATA.maxDay,DATA.maxDay]);
+  $("#quick").innerHTML=q.map((x,i)=>`<button class="chip" data-i="${i}">${x[0]}</button>`).join("");
+  $("#quick").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const x=q[+b.dataset.i];ST.from=x[1];ST.to=x[2];$("#from").value=ST.from;$("#to").value=ST.to;markQuick();render();});
+  function markQuick(){$("#quick").querySelectorAll(".chip").forEach(b=>{const x=q[+b.dataset.i];b.classList.toggle("on",x[1]===ST.from&&x[2]===ST.to);});}
+  buildFilters.markQuick=markQuick;markQuick();
+  const types=Object.entries(DATA.typeCounts).sort((a,b)=>b[1]-a[1]);
+  ST.types=new Set(types.map(t=>t[0]));
+  $("#types").innerHTML=types.map(([t,n])=>`<button class="chip on" data-t="${esc(t)}">${esc(t)} <b>${fmt(n)}</b></button>`).join("");
+  $("#types").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const t=b.dataset.t;if(ST.types.has(t))ST.types.delete(t);else ST.types.add(t);b.classList.toggle("on");render();});
+}
+function fillBase(keep){
+  const cur=snapId();
+  const hist=loadHist().filter(s=>s.id!==cur);
+  if(!keep||!hist.some(s=>s.id===ST.base)){
+    const same=hist.filter(s=>s.mandant===DATA.mandant);
+    ST.base=same.length?same[0].id:"";
+  }
+  $("#base").innerHTML=`<option value="">kein Vergleich</option>`+hist.map(s=>`<option value="${esc(s.id)}" ${s.id===ST.base?"selected":""}>${esc(snapLabel(s))}</option>`).join("");
+  $("#base").disabled=!hist.length;
+}
+$("#base").onchange=e=>{ST.base=e.target.value;render();};
+$("#grp").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{ST.grp=b.dataset.g;$("#grp").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b));if(DATA)render();});
+$("#tAll").onclick=()=>{ST.types=new Set(Object.keys(DATA.typeCounts));$("#types").querySelectorAll(".chip").forEach(b=>b.classList.add("on"));render();};
+$("#tNone").onclick=()=>{ST.types=new Set();$("#types").querySelectorAll(".chip").forEach(b=>b.classList.remove("on"));render();};
+$("#from").onchange=e=>{if(e.target.value){ST.from=e.target.value;if(ST.from>ST.to){ST.to=ST.from;$("#to").value=ST.to;}buildFilters.markQuick();render();}};
+$("#to").onchange=e=>{if(e.target.value){ST.to=e.target.value;if(ST.to<ST.from){ST.from=ST.to;$("#from").value=ST.from;}buildFilters.markQuick();render();}};
+$("#q").oninput=e=>{ST.q=e.target.value.trim();render();};
+
+/* ---------- Laden ---------- */
+function setStatus(on,txt){const s=$("#status");s.classList.toggle("on",on);s.querySelector("span").textContent=txt;}
+function loadFile(file){
+  if(!file)return;
+  $("#err").hidden=true;$("#loading").hidden=false;$("#empty").hidden=false;$("#app").hidden=true;setStatus(false,"Liest …");
+  if(typeof XLSX==="undefined"){showErr("Die Excel-Bibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen und Seite neu laden.");return;}
+  const fr=new FileReader();
+  fr.onload=()=>{
+    setTimeout(()=>{
+      try{
+        DATA=parseWorkbook(new Uint8Array(fr.result),file.name);
+        QUALI=loadQuali();QMATCH=new Map();
+        prepare();
+        buildFilters();
+        fillBase(false);
+        storeSnapshot();
+        $("#meta").innerHTML=`<b>${esc(DATA.mandant||"Mandant unbekannt")}</b> · ${dayLong(DATA.minDay)} – ${dayLong(DATA.maxDay)} · <span class="dim">${esc(file.name)}</span>`;
+        $("#empty").hidden=true;$("#app").hidden=false;$("#loading").hidden=true;
+        setStatus(true,fmt(DATA.rows.length)+" Zeilen");
+        render();
+      }catch(err){console.error(err);showErr(err.message||"Die Datei konnte nicht gelesen werden.");}
+    },20);
+  };
+  fr.onerror=()=>showErr("Die Datei konnte nicht gelesen werden.");
+  fr.readAsArrayBuffer(file);
+}
+function showErr(m){$("#loading").hidden=true;const e=$("#err");e.textContent=m;e.hidden=false;$("#empty").hidden=false;$("#app").hidden=true;setStatus(false,"Fehler");}
+$("#file").onchange=e=>{loadFile(e.target.files[0]);e.target.value="";};
+const drop=$("#drop");
+["dragenter","dragover"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over");}));
+["dragleave","drop"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();if(ev==="drop"||e.target===document.documentElement)drop.classList.remove("over");}));
+document.addEventListener("drop",e=>{const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)loadFile(f);});
+QUALI=loadQuali();
+
+window.__kpi={get DATA(){return DATA},get CUR(){return CUR},ST,SET,NET:()=>NET,autoMatch,loadHist,qualiOf};
+})();
+</script>
