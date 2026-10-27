@@ -209,6 +209,87 @@ table.mx tbody tr:hover td.nm{background:var(--panel2)}
 .hist .hm{min-width:0}
 .hist .hm div:last-child{color:var(--dim);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--panel2);border:1px solid var(--pack);border-radius:8px;padding:9px 16px;z-index:70;font-size:13px}
+/* Stapler */
+.sbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;padding:14px 0 4px}
+.fchip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:6px;padding:4px 6px 4px 10px;font-size:12.5px;background:var(--panel);max-width:100%}
+.fchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.fchip small{color:var(--dim);font-family:var(--f-mono)}
+.fchip button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:15px;line-height:1;padding:0 3px}
+.fchip button:hover{color:var(--warn)}
+table.ctr th,table.ctr td{text-align:center}
+table.ctr th.l,table.ctr td.l{text-align:left}
+table.ctr tbody tr.sel td{background:var(--panel2)}
+table.ctr tbody tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--pack)}
+.gp{display:inline-block;min-width:64px;font-family:var(--f-mono);font-size:12px;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.gp.ok{color:var(--pack);background:var(--pack-soft)}
+.gp.mid{color:var(--pick);background:var(--pick-soft)}
+.gp.low{color:var(--warn);background:var(--warn-soft)}
+.gp.none{color:var(--dim);background:none}
+.cnt{font-family:var(--f-mono);font-weight:500}
+.cnt.mid{color:var(--pick)} .cnt.low{color:var(--warn)} .cnt.zero{color:var(--dim)}
+#sKpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+#sKpis .kpi .v{font-size:25px}
+.tlw{overflow-x:auto}
+.tlw svg{min-width:760px}
+.mtag{font-size:12px;color:var(--muted);white-space:nowrap}
+.loc{font-family:var(--f-mono);font-size:12.5px}
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--fg);user-select:none}
+.switch input{position:absolute;opacity:0;width:1px;height:1px}
+.switch .sw{width:34px;height:19px;border-radius:999px;background:var(--line2);position:relative;flex:none;transition:background .15s}
+.switch .sw::after{content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:var(--fg);transition:left .15s}
+.switch input:checked+.sw{background:var(--pack)}
+.switch input:checked+.sw::after{left:17px;background:#06231a}
+.switch input:focus-visible+.sw{outline:2px solid var(--pack);outline-offset:2px}
+input.soll{width:76px;text-align:center;font-family:var(--f-mono);padding:4px 6px}
+#sCrit select{font-size:12.5px;padding:4px 6px}
+#sCrit input.note{width:170px;font-size:12.5px;padding:4px 6px}
+#sCrit tr.rsn td{background:rgba(143,168,255,.06)}
+#printArea{display:none}
+@media print{
+  @page{size:A4 portrait;margin:16mm 17mm 15mm}
+  :root,html{color-scheme:light!important;background:#fff!important;padding:0!important}
+  html,body{background:#fff!important;color:#1d1d1d!important;margin:0!important}
+  body::before{display:none!important}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block!important;font-family:"IBM Plex Sans",Arial,sans-serif;font-size:8.6pt;line-height:1.4;color:#1d1d1d;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .bbreak{break-before:page}
+  #printArea .bh{display:flex;justify-content:space-between;align-items:flex-end;gap:12mm;padding-bottom:4mm;border-bottom:.6pt solid #1d1d1d;margin-bottom:6mm}
+  #printArea .bk{font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:#7a7a7a}
+  #printArea .bn{font-size:20pt;font-weight:600;letter-spacing:-.01em;line-height:1.15;margin-top:1mm}
+  #printArea .bm{display:flex;gap:7mm;font-size:8.2pt;text-align:right}
+  #printArea .bm span{display:block;font-size:6.8pt;letter-spacing:.1em;text-transform:uppercase;color:#8a8a8a}
+  #printArea .bs{font-size:7pt;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#6a6a6a;margin:8mm 0 2.6mm;display:flex;justify-content:space-between;align-items:baseline}
+  #printArea .bp>.bs:first-of-type{margin-top:0}
+  #printArea .bcg{display:grid;grid-template-columns:repeat(4,1fr);gap:4mm}
+  #printArea .bc{border-top:1.4pt solid #1d1d1d;padding-top:2.2mm}
+  #printArea .bcl{font-size:7.5pt;color:#6a6a6a}
+  #printArea .bcv{font-size:19pt;font-weight:600;line-height:1.2;letter-spacing:-.01em}
+  #printArea .bcs{font-size:7.5pt;color:#555}
+  #printArea .bline{display:flex;flex-wrap:wrap;gap:1.5mm 7mm;margin-top:4mm;padding:2.4mm 0;border-top:.4pt solid #e2e2e2;border-bottom:.4pt solid #e2e2e2;font-size:7.8pt;color:#555}
+  #printArea .bline b{color:#1d1d1d;font-weight:600}
+  #printArea .b2{display:grid;grid-template-columns:1fr 1fr;gap:9mm;align-items:start}
+  #printArea table.bt{width:100%;border-collapse:collapse;font-size:8pt}
+  #printArea table.bt th{font-size:6.8pt;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#7a7a7a;text-align:center;padding:0 2mm 1.4mm;border-bottom:.6pt solid #1d1d1d}
+  #printArea table.bt td{text-align:center;padding:1.35mm 2mm;border-bottom:.4pt solid #e6e6e6;white-space:nowrap}
+  #printArea table.bt .l{text-align:left}
+  #printArea table.bt tr{break-inside:avoid}
+  #printArea table.bt tr.bsum td{border-top:.6pt solid #1d1d1d;border-bottom:none;font-weight:600}
+  #printArea table.bts td{padding:1.1mm 1.6mm;font-size:7.6pt}
+  #printArea table.bts td.l{white-space:normal}
+  #printArea table.bts td:first-child{white-space:nowrap}
+  #printArea .bchart svg{max-width:115mm}
+  #printArea b{font-weight:600}
+  #printArea .bd{display:inline-block;width:5.5px;height:5.5px;border-radius:50%;margin-right:5px;vertical-align:1px}
+  #printArea .bmut{color:#8a8a8a}
+  #printArea .bpad{margin:2mm 0 0}
+  #printArea .bsvg{width:100%;height:auto;display:block}
+  #printArea .bchart svg{width:100%;max-width:130mm;height:auto;display:block}
+  #printArea .blg{font-size:7pt;letter-spacing:0;text-transform:none;font-weight:400;color:#7a7a7a}
+  #printArea .blg i{display:inline-block;width:9px;height:6px;border-radius:1px;margin:0 3px 0 9px;vertical-align:0}
+  #printArea .bnotes div{height:9mm;border-bottom:.4pt solid #cfcfcf}
+  #printArea .bf{margin-top:6mm;font-size:6.8pt;color:#8a8a8a;line-height:1.45}
+  #printArea table,#printArea thead th,#printArea tbody td,#printArea tr{background:transparent!important;position:static!important;box-shadow:none!important}
+}
 /* Reiter */
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:14px;overflow-x:auto}
 .tabs button{background:none;border:none;border-bottom:2px solid transparent;padding:10px 16px 9px;cursor:pointer;font-family:var(--f-disp);font-weight:600;font-size:17px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);white-space:nowrap;margin-bottom:-1px}
@@ -277,6 +358,11 @@ table.sr tr.tl td{background:var(--bg);white-space:normal;text-align:left;cursor
 footer{color:var(--dim);font-size:12px;margin-top:22px;display:flex;flex-direction:column;gap:4px;max-width:120ch}
 @media (max-width:640px){
   header.top{position:static}
+  .tabs{gap:0}
+  .tabs button{font-size:13px;padding:9px 7px 8px;letter-spacing:0}
+  .fchip{flex-wrap:wrap;width:100%}
+  .fchip small{flex-basis:100%;order:3;white-space:normal}
+  .sbar>label{width:100%;justify-content:center}
   .brand h1{font-size:22px}
   .kpi .v{font-size:24px}
   .cols{grid-template-columns:1fr}
@@ -299,12 +385,19 @@ footer{color:var(--dim);font-size:12px;margin-top:22px;display:flex;flex-directi
     <div class="status" id="status"><i></i><span>Bereit</span></div>
     <button class="btn" id="btnSet" type="button">Einstellungen</button>
     <button class="btn" id="btnExp" type="button" disabled>Excel-Export</button>
-    <label class="btn primary" for="file">Liste laden</label>
+    <label class="btn primary" for="file" id="btnLoad">Liste laden</label>
     <input type="file" id="file" accept=".xlsx,.xls,.xlsm,.csv" hidden>
+    <input type="file" id="sfile" accept=".xlsx,.xls,.xlsm,.csv" multiple hidden>
   </div>
 </header>
 
 <main class="wrap">
+  <nav class="tabs" role="tablist" aria-label="Bereiche">
+    <button role="tab" id="tabBtnKpi" class="on" aria-selected="true" data-tab="kpi">Mitarbeiter-KPI</button>
+    <button role="tab" id="tabBtnSearch" aria-selected="false" data-tab="search">Auftrags-Suche</button>
+    <button role="tab" id="tabBtnSta" aria-selected="false" data-tab="sta">Stapler</button>
+  </nav>
+  <div id="tabKpi" role="tabpanel">
   <section id="empty">
     <div class="drop" id="drop">
       <h2>Lieferschein-Controlling hier ablegen</h2>
@@ -318,31 +411,7 @@ footer{color:var(--dim);font-size:12px;margin-top:22px;display:flex;flex-directi
       <div class="loading" id="loading" hidden>Liste wird gelesen …</div>
     </div>
   </section>
-
   <section id="app" hidden>
-    <nav class="tabs" role="tablist" aria-label="Bereiche">
-      <button role="tab" id="tabBtnKpi" class="on" aria-selected="true" data-tab="kpi">Mitarbeiter-KPI</button>
-      <button role="tab" id="tabBtnSearch" aria-selected="false" data-tab="search">Auftrags-Suche</button>
-    </nav>
-    <div id="tabSearch" role="tabpanel" hidden>
-    <div class="panel full" id="searchPanel">
-      <div class="phead">
-        <h2>Auftrags-Suche</h2>
-        <span class="sub">Kundenauftragsnummern (SK…) oder Lieferschein-Nummern einfügen, gemischt geht auch · durchsucht immer die komplette geladene Liste</span>
-      </div>
-      <div class="pbody">
-        <div class="search-in">
-          <textarea id="searchIn" placeholder="SK01547717&#10;44369817&#10;SK01547575 …" aria-label="Nummern"></textarea>
-          <div class="search-act">
-            <button class="btn primary" id="searchGo" type="button">Suchen</button>
-            <button class="btn" id="searchClr" type="button">Leeren</button>
-          </div>
-        </div>
-        <div id="searchOut"></div>
-      </div>
-    </div>
-    </div>
-    <div id="tabKpi" role="tabpanel">
     <div class="filters">
       <div class="fgroup">
         <span class="flabel">Zeitraum</span>
@@ -465,14 +534,153 @@ footer{color:var(--dim);font-size:12px;margin-top:22px;display:flex;flex-directi
     </div>
 
     <footer id="foot"></footer>
-    </div>
   </section>
+  </div>
+  <div id="tabSearch" role="tabpanel" hidden>
+    <div class="panel full" id="searchPanel">
+      <div class="phead">
+        <h2>Auftrags-Suche</h2>
+        <span class="sub">Kundenauftragsnummern (SK…) oder Lieferschein-Nummern einfügen, gemischt geht auch · durchsucht immer die komplette geladene Liste</span>
+      </div>
+      <div class="pbody">
+        <div class="search-in">
+          <textarea id="searchIn" placeholder="SK01547717&#10;44369817&#10;SK01547575 …" aria-label="Nummern"></textarea>
+          <div class="search-act">
+            <button class="btn primary" id="searchGo" type="button">Suchen</button>
+            <button class="btn" id="searchClr" type="button">Leeren</button>
+          </div>
+        </div>
+        <div id="searchOut"></div>
+      </div>
+    </div>
+    
+  </div>
+  <div id="tabSta" role="tabpanel" hidden>
+    <div id="sEmpty">
+      <div class="drop" id="sDrop">
+        <h2>Stapler-Auswertung</h2>
+        <p>Tätigkeits-Excel hierher ziehen oder auswählen, gern mehrere Dateien auf einmal (mehrere Fahrer oder Wochen). Ausgewertet wird nur die Tätigkeit „Umlagerung“, alle anderen Zeilen werden ignoriert. Nichts wird hochgeladen oder gespeichert.</p>
+        <div class="cols">
+          <div class="p1"><b>Abstand &gt; 15 Min.</b><br><span class="small">gelb markiert</span></div>
+          <div class="p2"><b>Abstand ab 30 Min.</b><br><span class="small">rot markiert</span></div>
+        </div>
+        <label class="btn" for="sfile">Dateien auswählen</label>
+        <div class="err" id="sErr" hidden></div>
+        <div class="loading" id="sLoading" hidden>Dateien werden gelesen …</div>
+      </div>
+    </div>
+    <div id="sApp" hidden>
+      <div class="sbar">
+        <div class="fgroup" style="flex:1;min-width:0">
+          <span class="flabel">Geladene Dateien</span>
+          <div class="row" id="sFiles"></div>
+        </div>
+        <button class="btn" id="sBtnBogen" type="button">Gesprächsbogen</button>
+        <button class="btn" id="sBtnExp" type="button">Excel-Export</button>
+        <label class="btn primary" for="sfile">Dateien hinzufügen</label>
+      </div>
+      <div class="filters">
+        <div class="fgroup">
+          <span class="flabel">Zeitraum</span>
+          <div class="row"><input type="date" id="sFrom" aria-label="Von"><span class="dim">–</span><input type="date" id="sTo" aria-label="Bis"></div>
+        </div>
+        <div class="fgroup">
+          <span class="flabel">Tag</span>
+          <div class="row" id="sQuick"></div>
+        </div>
+        <div class="fgroup" style="min-width:0">
+          <span class="flabel">Fahrer</span>
+          <div class="row" id="sDrivers"></div>
+        </div>
+        <div class="fgroup">
+          <span class="flabel">Begründete Abstände</span>
+          <label class="switch" for="sExcl"><input type="checkbox" id="sExcl"><span class="sw"></span><span id="sExclLbl">werden mitgezählt</span></label>
+        </div>
+      </div>
+      <div class="kpis" id="sKpis"></div>
+
+      <div class="panel full">
+        <div class="phead"><h2>Fahrer-Übersicht</h2><span class="sub">Häkchen setzen für den Fahrer-Vergleich · Soll = erwartete Paletten pro Tag, von dir festgelegt</span></div>
+        <div class="tbl-wrap"><table class="ctr" id="sDrv"></table></div>
+      </div>
+
+      <div class="panel full">
+        <div class="phead"><h2>Fahrer-Vergleich</h2><span class="sub">gewählter Zeitraum</span><div class="spacer"></div><select id="sCmpAdd" aria-label="Fahrer hinzufügen"></select></div>
+        <div class="pbody" id="sCmp"></div>
+      </div>
+
+      <div class="panel full">
+        <div class="phead"><h2>Tagesauswertung</h2><span class="sub">pro Fahrer und Tag · Zeile anklicken für alle Umlagerungen dieses Tages</span></div>
+        <div class="tbl-wrap"><table class="ctr" id="sDays"></table></div>
+      </div>
+
+      <div class="panel full">
+        <div class="phead"><h2>Wochenvergleich</h2><span class="sub">alle geladenen Wochen der gewählten Fahrer · Veränderung zur Vorwoche</span></div>
+        <div class="tbl-wrap"><table class="ctr" id="sWeeks"></table></div>
+      </div>
+
+      <div class="panel full">
+        <div class="phead">
+          <h2>Zeitstrahl</h2>
+          <span class="sub">jeder Strich = eine Palette · farbige Balken = Abstand zur nächsten Palette</span>
+          <div class="spacer"></div>
+          <div class="legend"><span><i style="background:var(--pick)"></i>über 15 Min.</span><span><i style="background:var(--warn)"></i>ab 30 Min.</span><span><i style="background:var(--leih)"></i>begründet</span></div>
+        </div>
+        <div class="pbody" id="sTimeline"></div>
+      </div>
+
+      <div class="grid2b">
+        <div class="panel">
+          <div class="phead"><h2>Paletten pro Tag</h2><div class="spacer"></div><div class="legend" id="sDayLeg"></div></div>
+          <div class="pbody" id="sDayChart"></div>
+        </div>
+        <div class="panel">
+          <div class="phead"><h2>Verteilung der Abstände</h2></div>
+          <div class="pbody" id="sHist"></div>
+        </div>
+      </div>
+
+      <div class="grid2b">
+        <div class="panel">
+          <div class="phead">
+            <h2>Unterbrechungen nach Uhrzeit</h2>
+            <span class="sub">wann beginnen die Abstände über 15 Min.</span>
+            <div class="spacer"></div>
+            <div class="legend"><span><i style="background:var(--pick)"></i>über 15 Min.</span><span><i style="background:var(--warn)"></i>ab 30 Min.</span></div>
+          </div>
+          <div class="pbody" id="sGapHour"></div>
+        </div>
+        <div class="panel">
+          <div class="phead"><h2>Mandanten</h2><span class="sub">umgelagerte Paletten</span></div>
+          <div class="pbody"><div class="typelist" id="sMand"></div></div>
+        </div>
+      </div>
+
+      <div class="panel full">
+        <div class="phead"><h2>Paletten je Uhrzeit</h2><span class="sub">alle Tage im Zeitraum</span></div>
+        <div class="pbody" id="sHour"></div>
+      </div>
+
+      <div class="panel full">
+        <div class="phead"><h2>Kritische Abstände</h2><span class="sub" id="sCritSub">alle Abstände über 15 Minuten, längste zuerst</span></div>
+        <div class="tbl-wrap"><table class="ctr" id="sCrit"></table></div>
+      </div>
+
+      <div class="panel full" id="sMovesPanel">
+        <div class="phead"><h2>Umlagerungen im Detail</h2><span class="sub">Abstand = Zeit seit der vorherigen Palette</span></div>
+        <div class="pbody" style="padding-bottom:4px"><div class="row" id="sDayPick"></div></div>
+        <div class="tbl-wrap"><table class="ctr" id="sMoves"></table></div>
+      </div>
+      <footer id="sFoot"></footer>
+    </div>
+  </div>
 </main>
 
 <div class="chart-tip" id="tip" hidden></div>
 <div class="scrim" id="scrim" hidden></div>
 <aside class="drawer" id="drawer" hidden aria-modal="true" role="dialog"></aside>
 <div class="toast" id="toast" hidden></div>
+<div id="printArea" aria-hidden="true"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
@@ -1040,7 +1248,8 @@ function trackLink(no){
   return {href:"https://t.17track.net/de#nums="+encodeURIComponent(n),label:"17TRACK"};
 }
 function runSearch(){
-  if(!DATA)return;if(!IDX)buildIndex();
+  if(!DATA){$("#searchOut").innerHTML='<div class="hint">Lade zuerst eine Lieferschein-Liste (oben „Liste laden“ oder im Reiter Mitarbeiter-KPI). Die Suche durchsucht dann diese Liste.</div>';return;}
+  if(!IDX)buildIndex();
   const raw=$("#searchIn").value;
   const toks=[...new Set(raw.split(/[\s,;|]+/).map(t=>t.trim().replace(/^["']|["']$/g,"")).filter(t=>t&&/\d/.test(t)))];
   if(!toks.length){$("#searchOut").innerHTML='<div class="hint">Bitte mindestens eine Kundenauftrags- oder Lieferschein-Nummer einfügen.</div>';return;}
@@ -1074,17 +1283,534 @@ function runSearch(){
     tr.after(tl);
   });
 }
+let TAB="kpi";
 function setTab(t){
-  const k=t==="kpi";$("#tabKpi").hidden=!k;$("#tabSearch").hidden=k;
+  if(!["kpi","search","sta"].includes(t))t="kpi";TAB=t;
+  $("#tabKpi").hidden=t!=="kpi";$("#tabSearch").hidden=t!=="search";$("#tabSta").hidden=t!=="sta";
   document.querySelectorAll(".tabs button").forEach(b=>{const on=b.dataset.tab===t;b.classList.toggle("on",on);b.setAttribute("aria-selected",on);});
-  $("#btnExp").hidden=!k;$("#btnSet").hidden=!k;closeDrawer();
-  if(!k)$("#searchIn").focus();
+  const k=t==="kpi";
+  $("#btnExp").hidden=!k||!DATA;$("#btnSet").hidden=!k;$("#btnLoad").hidden=t==="sta";$("#status").hidden=t==="sta";$("#meta").hidden=t==="sta";
+  closeDrawer();
+  if(t==="search")$("#searchIn").focus();
   lsSet("packpick-kpi-tab",t);
 }
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 $("#searchGo").onclick=runSearch;
 $("#searchClr").onclick=()=>{$("#searchIn").value="";$("#searchOut").innerHTML="";$("#searchIn").focus();};
 $("#searchIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();runSearch();}});
+
+/* ---------- Stapler ---------- */
+const S_Y=15,S_R=30; // Minuten: über 15 gelb, ab 30 rot
+const RKEY="packpick-sta-reasons-v1",SOLLKEY="packpick-sta-soll-v1",EXKEY="packpick-sta-excl-v1";
+const REASONS=["Pause","Nachschub gewartet","Stapler defekt / laden","Sonderaufgabe","Sonstiges"];
+function lsJSON(k,d){try{const v=JSON.parse(lsGet(k)||"null");return v&&typeof v==="object"?v:d}catch(e){return d}}
+const STA={files:[],moves:[],base:[],days:[],f:{from:null,to:null,drivers:new Set(),sel:null},known:new Set(),
+  cmp:new Set(),reasons:lsJSON(RKEY,{}),soll:lsJSON(SOLLKEY,{}),excl:lsGet(EXKEY)==="1"};
+const gapCls=m=>m==null?"none":m>=S_R?"low":m>S_Y?"mid":"ok";
+function fmtGap(m){if(m==null||!isFinite(m))return "–";const s=Math.round(m*60),h=Math.floor(s/3600),mi=Math.floor(s%3600/60),se=s%60;return h?`${h}:${String(mi).padStart(2,"0")}:${String(se).padStart(2,"0")} h`:`${mi}:${String(se).padStart(2,"0")} Min`;}
+function fmtDur(m){if(m==null||!isFinite(m))return "–";const t=Math.round(m),h=Math.floor(t/60),mi=t%60;return h?`${h} h ${String(mi).padStart(2,"0")} Min`:`${mi} Min`;}
+function hms(t){const s=Math.round(t*3600);return [Math.floor(s/3600),Math.floor(s%3600/60),s%60].map(n=>String(n).padStart(2,"0")).join(":");}
+const shortM=m=>String(m).replace(/\s+(GmbH\s*&\s*Co\.?\s*KG|GmbH|AG|KG|SE|UG(\s*\(haftungsbeschränkt\))?|e\.?\s*K\.?)$/i,"").trim()||m;
+const gapPill=m=>`<span class="gp ${gapCls(m)}">${fmtGap(m)}</span>`;
+const median=a=>{if(!a.length)return null;const s=[...a].sort((x,y)=>x-y),n=s.length;return n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2;};
+const mean=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
+function isoWeek(day){const [y,m,d]=day.split("-").map(Number);const dt=new Date(Date.UTC(y,m-1,d));const wd=dt.getUTCDay()||7;dt.setUTCDate(dt.getUTCDate()+4-wd);
+  const y0=new Date(Date.UTC(dt.getUTCFullYear(),0,1));const w=Math.ceil(((dt-y0)/86400000+1)/7);return {y:dt.getUTCFullYear(),w,key:dt.getUTCFullYear()+"-W"+String(w).padStart(2,"0")};}
+const prevWeekKey=k=>{const [y,w]=k.split("-W").map(Number);if(w>1)return y+"-W"+String(w-1).padStart(2,"0");const d=new Date(Date.UTC(y,0,4));d.setUTCDate(d.getUTCDate()-7);const i=isoWeek(d.toISOString().slice(0,10));return i.key;};
+const kwLabel=k=>"KW "+Number(k.split("-W")[1]);
+const gkey=m=>m.drv+"|"+m.day+"|"+hms(m.prev.t)+"|"+hms(m.t);
+const reasonOf=m=>m&&m.prev?STA.reasons[gkey(m)]||null:null;
+const sollOf=d=>{const v=+STA.soll[d];return v>0?v:null;};
+function sollCls(v,soll){if(!soll||v==null)return "none";return v>=soll?"ok":v>=soll*0.85?"mid":"low";}
+
+function parseStapler(buf,fileName){
+  const wb=XLSX.read(buf,{type:"array",cellDates:false,dense:true});
+  for(const sn of wb.SheetNames){
+    const aoa=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,raw:true,defval:null,blankrows:false});
+    for(let i=0;i<Math.min(aoa.length,40);i++){
+      const H=(aoa[i]||[]).map(c=>c==null?"":String(c).trim().toLowerCase());
+      if(!(H.includes("tätigkeit")&&H.includes("datum")))continue;
+      const f=n=>H.indexOf(n);
+      const C={d:f("datum"),m:f("mandant"),w:f("mitarbeiter"),a:f("tätigkeit"),b:f("beschreibung"),z:f("zeit"),ls:f("ls-nummer"),p:f("projekt")};
+      const out=[];let other=0,bad=0;
+      for(let j=i+1;j<aoa.length;j++){
+        const r=aoa[j];if(!r)continue;
+        const act=cleanName(r[C.a]);if(!act)continue;
+        if(!/^umlager/i.test(act)){other++;continue;}
+        const st=toStamp(r[C.d]);if(!st){bad++;continue;}
+        const b=cleanName(C.b>=0?r[C.b]:"");const vn=b.split(/\s+nach\s+/i);
+        out.push({drv:cleanName(C.w>=0?r[C.w]:"")||"ohne Namen",day:st.day,t:st.t,mand:cleanName(C.m>=0?r[C.m]:"")||"ohne Mandant",
+          proj:cleanName(C.p>=0?r[C.p]:""),von:vn.length===2?vn[0]:b,nach:vn.length===2?vn[1]:"",
+          ls:C.ls>=0&&r[C.ls]!=null&&String(r[C.ls]).trim()!==""&&+r[C.ls]!==0?String(r[C.ls]).replace(/\.0+$/,""):"",
+          zeit:C.z>=0?toNum(r[C.z]):0,file:fileName});
+      }
+      return {moves:out,other,bad};
+    }
+  }
+  throw new Error(`„${fileName}“: keine Kopfzeile mit „Datum“ und „Tätigkeit“ gefunden.`);
+}
+function staLoad(files){
+  if(!files.length)return;
+  if(typeof XLSX==="undefined"){staErr("Die Excel-Bibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen und Seite neu laden.");return;}
+  $("#sErr").hidden=true;$("#sLoading").hidden=false;
+  const errs=[];let added=0,dup=0;
+  const readOne=f=>new Promise(res=>{const fr=new FileReader();fr.onload=()=>{
+    try{const r=parseStapler(new Uint8Array(fr.result),f.name);let n=0;
+      for(const m of r.moves){const k=m.drv+"|"+m.day+"|"+m.t.toFixed(5)+"|"+m.ls;if(STA.known.has(k)){dup++;continue;}STA.known.add(k);STA.moves.push(m);n++;}
+      added+=n;
+      const fi=STA.files.find(x=>x.name===f.name);if(fi)fi.n+=n;else STA.files.push({name:f.name,n,other:r.other});
+      if(!r.moves.length)errs.push(`„${f.name}“ enthält keine Tätigkeit „Umlagerung“.`);
+    }catch(e){errs.push(e.message||`„${f.name}“ konnte nicht gelesen werden.`);}
+    res();};fr.onerror=()=>{errs.push(`„${f.name}“ konnte nicht gelesen werden.`);res();};fr.readAsArrayBuffer(f);});
+  setTimeout(async()=>{
+    for(const f of files)await readOne(f);
+    STA.files=STA.files.filter(x=>x.n>0);
+    $("#sLoading").hidden=true;
+    if(errs.length)staErr(errs.join(" "));
+    if(STA.moves.length){staPrepare(true);toast(`${fmt(added)} Umlagerungen geladen`+(dup?` · ${fmt(dup)} doppelte übersprungen`:""));}
+  },20);
+}
+function staErr(m){const e=$("#sErr");e.textContent=m;e.hidden=false;if(STA.moves.length)toast(m);}
+function staRemoveFile(name){
+  STA.moves=STA.moves.filter(m=>m.file!==name);STA.files=STA.files.filter(f=>f.name!==name);
+  STA.known=new Set(STA.moves.map(m=>m.drv+"|"+m.day+"|"+m.t.toFixed(5)+"|"+m.ls));
+  staPrepare(true);
+}
+/* Grunddaten je Fahrer-Tag (unabhängig von Begründungen) */
+function staPrepare(resetFilter){
+  const has=STA.moves.length>0;$("#sEmpty").hidden=has;$("#sApp").hidden=!has;
+  if(!has){$("#sErr").hidden=true;return;}
+  STA.moves.sort((a,b)=>a.drv.localeCompare(b.drv,"de")||(a.day<b.day?-1:a.day>b.day?1:a.t-b.t));
+  const G=new Map();
+  for(const m of STA.moves){const k=m.drv+"|"+m.day;if(!G.has(k))G.set(k,[]);G.get(k).push(m);}
+  STA.base=[];
+  for(const [k,arr] of G){
+    arr.forEach((m,i)=>{m.gap=i?(m.t-arr[i-1].t)*60:null;m.prev=i?arr[i-1]:null;m.next=i<arr.length-1?arr[i+1]:null;m.idx=i+1;m.hour=Math.floor(m.t);});
+    const mand=new Map();arr.forEach(m=>mand.set(m.mand,(mand.get(m.mand)||0)+1));
+    STA.base.push({key:k,drv:arr[0].drv,day:arr[0].day,wk:isoWeek(arr[0].day).key,moves:arr,n:arr.length,start:arr[0].t,end:arr[arr.length-1].t,mand,booked:arr.reduce((a,m)=>a+m.zeit,0)});
+  }
+  STA.base.sort((a,b)=>a.day<b.day?-1:a.day>b.day?1:a.drv.localeCompare(b.drv,"de"));
+  const allDays=STA.base.map(d=>d.day).sort();const minD=allDays[0],maxD=allDays[allDays.length-1];
+  const drivers=[...new Set(STA.base.map(d=>d.drv))].sort((a,b)=>a.localeCompare(b,"de"));
+  const F=STA.f;
+  if(resetFilter||!F.from){F.from=minD;F.to=maxD;}
+  if(F.from<minD)F.from=minD;if(F.to>maxD)F.to=maxD;if(F.from>F.to){F.from=minD;F.to=maxD;}
+  if(resetFilter||!F.drivers.size)F.drivers=new Set(drivers);else F.drivers=new Set(drivers.filter(d=>F.drivers.has(d)));
+  if(!F.drivers.size)F.drivers=new Set(drivers);
+  STA.cmp=new Set([...STA.cmp].filter(d=>drivers.includes(d)));
+  $("#sFrom").min=$("#sTo").min=minD;$("#sFrom").max=$("#sTo").max=maxD;$("#sFrom").value=F.from;$("#sTo").value=F.to;
+  $("#sFiles").innerHTML=STA.files.map(f=>{const mv=STA.moves.filter(m=>m.file===f.name);const dr=[...new Set(mv.map(m=>m.drv))].join(", ");const ds=mv.map(m=>m.day).sort();
+    return `<span class="fchip" title="${esc(f.name)}"><span>${esc(f.name)}</span><small>${esc(dr)} · ${ds.length?dShort(ds[0])+"–"+dShort(ds[ds.length-1]):""} · ${fmt(f.n)} Umlag.</small><button data-rmf="${esc(f.name)}" aria-label="${esc(f.name)} entfernen">×</button></span>`;}).join("");
+  $("#sFiles").querySelectorAll("[data-rmf]").forEach(b=>b.onclick=()=>staRemoveFile(b.dataset.rmf));
+  $("#sDrivers").innerHTML=drivers.map(d=>`<button class="chip ${F.drivers.has(d)?"on":""}" data-d="${esc(d)}">${esc(d)} <b>${fmt(STA.moves.filter(m=>m.drv===d).length)}</b></button>`).join("");
+  $("#sDrivers").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const d=b.dataset.d;if(F.drivers.has(d)){if(F.drivers.size>1)F.drivers.delete(d);}else F.drivers.add(d);
+    $("#sDrivers").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",F.drivers.has(x.dataset.d)));staRender();});
+  const uniq=[...new Set(allDays)];
+  const weeks=[...new Set(STA.base.map(d=>d.wk))].sort();
+  const q=[["Alle Tage",minD,maxD]];
+  if(weeks.length>1)weeks.forEach(w=>{const ds=STA.base.filter(d=>d.wk===w).map(d=>d.day).sort();q.push([kwLabel(w),ds[0],ds[ds.length-1]]);});
+  uniq.forEach(d=>q.push([WD[wday(d)]+" "+dayLabel(d),d,d]));
+  $("#sQuick").innerHTML=q.map((x,i)=>`<button class="chip" data-i="${i}">${x[0]}</button>`).join("");
+  $("#sQuick").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{const x=q[+b.dataset.i];F.from=x[1];F.to=x[2];$("#sFrom").value=F.from;$("#sTo").value=F.to;staRender();});
+  STA.markQuick=()=>$("#sQuick").querySelectorAll(".chip").forEach(b=>{const x=q[+b.dataset.i];b.classList.toggle("on",x[1]===F.from&&x[2]===F.to);});
+  staRender();
+}
+/* Kennzahlen je Fahrer-Tag – berücksichtigt Begründungen, wenn der Schalter aktiv ist */
+function staStat(b){
+  const gl=[];let exMin=0,exN=0,reasoned=0;
+  for(const m of b.moves){
+    if(m.gap==null)continue;
+    const r=m.gap>S_Y?reasonOf(m):null;
+    if(r){reasoned++;if(STA.excl){exMin+=m.gap;exN++;continue;}}
+    gl.push(m);
+  }
+  const gaps=gl.map(m=>m.gap);
+  const span0=(b.end-b.start)*60,span=span0-exMin;
+  const mx=gaps.length?Math.max(...gaps):null;
+  return Object.assign({},b,{gapMoves:gl,gaps,span0,span,exMin,exN,reasoned,avg:mean(gaps),med:median(gaps),max:mx,maxAt:mx!=null?gl.find(m=>m.gap===mx):null,
+    yel:gaps.filter(g=>g>S_Y&&g<S_R).length,red:gaps.filter(g=>g>=S_R).length,inter:gaps.filter(g=>g>S_Y).reduce((a,g)=>a+g,0)});
+}
+/* Summen über mehrere Fahrer-Tage */
+function staAgg(D){
+  const n=D.reduce((a,d)=>a+d.n,0),span=D.reduce((a,d)=>a+d.span,0),span0=D.reduce((a,d)=>a+d.span0,0),inter=D.reduce((a,d)=>a+d.inter,0);
+  const gaps=D.flatMap(d=>d.gaps);const mxD=D.filter(d=>d.max!=null).sort((a,b)=>b.max-a.max)[0]||null;
+  const days=D.length;
+  return {days,nd:new Set(D.map(d=>d.day)).size,n,span,span0,inter,gaps,avg:mean(gaps),med:median(gaps),max:mxD?mxD.max:null,mxD,
+    yel:D.reduce((a,d)=>a+d.yel,0),red:D.reduce((a,d)=>a+d.red,0),exMin:D.reduce((a,d)=>a+d.exMin,0),exN:D.reduce((a,d)=>a+d.exN,0),
+    reasoned:D.reduce((a,d)=>a+d.reasoned,0),perDay:days?n/days:null,perHour:span>0?n/(span/60):null};
+}
+$("#sFrom").onchange=e=>{const F=STA.f;if(e.target.value){F.from=e.target.value;if(F.from>F.to){F.to=F.from;$("#sTo").value=F.to;}staRender();}};
+$("#sTo").onchange=e=>{const F=STA.f;if(e.target.value){F.to=e.target.value;if(F.to<F.from){F.from=F.to;$("#sFrom").value=F.from;}staRender();}};
+$("#sfile").onchange=e=>{staLoad([...e.target.files]);e.target.value="";};
+$("#sExcl").checked=STA.excl;
+$("#sExcl").onchange=e=>{STA.excl=e.target.checked;lsSet(EXKEY,STA.excl?"1":"0");staRender();};
+
+function deltaHtml(cur,base,lowerBetter,fmtFn,unit){
+  if(cur==null||base==null)return '<span class="dim">–</span>';
+  const d=cur-base;const rel=base?d/base:0;
+  const flat=Math.abs(rel)<0.02&&Math.abs(d)<0.5;
+  const good=lowerBetter?d<0:d>0;
+  const cls=flat?"flat":good?"up":"down";const ar=flat?"■":d>0?"▲":"▼";
+  return `<span class="trend ${cls}" title="Vorwoche ${fmtFn(base)} · jetzt ${fmtFn(cur)}${unit?" "+unit:""}">${ar} ${d>0?"+":d<0?"−":""}${fmtFn(Math.abs(d))}</span>`;
+}
+
+function staRender(){
+  const F=STA.f;STA.markQuick&&STA.markQuick();
+  $("#sExclLbl").textContent=STA.excl?"werden herausgerechnet":"werden mitgezählt";
+  STA.days=STA.base.map(staStat);
+  const D=STA.days.filter(d=>d.day>=F.from&&d.day<=F.to&&F.drivers.has(d.drv));
+  const multi=F.drivers.size>1;
+  const A=staAgg(D);
+  const mxCls=A.mxD?gapCls(A.mxD.max):"";
+  const exInfo=A.reasoned?(STA.excl?`${A.exN} begründet, herausgerechnet (${fmtDur(A.exMin)})`:`${A.reasoned} begründet, mitgezählt`):"keine begründet";
+  $("#sKpis").innerHTML=[
+    kpi("pack","Paletten umgelagert",fmt(A.n),A.nd+(A.nd===1?" Arbeitstag":" Arbeitstage")+" · Ø "+fmt1(A.perDay)+" pro Fahrer-Tag"),
+    kpi("pack","Paletten / Std",fmt1(A.perHour),STA.excl&&A.exMin?"Arbeitszeit ohne begründete Abstände":"über die Zeit erste bis letzte Palette"),
+    kpi("pack","Ø Abstand",fmtGap(A.avg),"Median "+fmtGap(A.med)),
+    kpi("pick","Abstände über 15 Min.",`<span class="cnt ${A.yel?"mid":"zero"}">${fmt(A.yel)}</span>`,"gelb · 15 bis unter 30 Min.",true),
+    kpi("warn","Abstände ab 30 Min.",`<span class="cnt ${A.red?"low":"zero"}">${fmt(A.red)}</span>`,exInfo,true),
+    kpi("warn","Zeit in Unterbrechungen",fmtDur(A.inter),pct(A.inter,A.span)+" der Arbeitszeit"),
+    kpi("pack","Arbeitszeit",fmtDur(A.span),"ohne Unterbrechungen "+fmtDur(A.span-A.inter)),
+    kpi("warn","Längster Abstand",A.mxD?`<span class="cnt ${mxCls}">${fmtGap(A.mxD.max)}</span>`:"–",A.mxD?dayLong(A.mxD.day)+" · "+hm(A.mxD.maxAt.prev.t)+"–"+hm(A.mxD.maxAt.t)+(multi?" · "+A.mxD.drv:""):"",true)
+  ].join("");
+
+  /* Fahrer-Übersicht */
+  const byDrv=new Map();for(const d of D){if(!byDrv.has(d.drv))byDrv.set(d.drv,[]);byDrv.get(d.drv).push(d);}
+  const drvList=[...byDrv.entries()].map(([name,ds])=>({name,ds,a:staAgg(ds)})).sort((x,y)=>y.a.n-x.a.n);
+  STA.drvList=drvList;
+  let h=`<thead><tr><th class="selc" title="Für den Vergleich auswählen">✓</th><th class="l">Fahrer</th><th>Tage</th><th>Paletten</th><th>Ø Paletten / Tag</th><th>Soll / Tag</th><th>Zielerfüllung</th><th>Paletten / Std</th><th>Ø Abstand</th><th>Median</th><th>Längster Abstand</th><th>über 15 Min.</th><th>ab 30 Min.</th><th>Unterbrechungszeit</th><th>Arbeitszeit</th></tr></thead><tbody>`;
+  for(const {name,a} of drvList){
+    const soll=sollOf(name);const zf=soll?a.perDay/soll*100:null;
+    h+=`<tr style="cursor:default"><td class="selc"><input type="checkbox" data-csel="${esc(name)}" aria-label="${esc(name)} vergleichen" ${STA.cmp.has(name)?"checked":""}></td><td class="l name">${esc(name)}</td><td class="n">${a.days}</td><td class="n">${fmt(a.n)}</td><td><span class="gp ${sollCls(a.perDay,soll)}">${fmt1(a.perDay)}</span></td>`+
+      `<td><input type="number" class="soll" min="0" step="1" data-soll="${esc(name)}" value="${soll||""}" placeholder="–" aria-label="Soll Paletten pro Tag für ${esc(name)}"></td><td class="n">${zf==null?'<span class="dim">–</span>':Math.round(zf)+" %"}</td>`+
+      `<td class="n">${fmt1(a.perHour)}</td><td>${gapPill(a.avg)}</td><td>${gapPill(a.med)}</td><td>${gapPill(a.max)}</td><td><span class="cnt ${a.yel?"mid":"zero"}">${a.yel}</span></td><td><span class="cnt ${a.red?"low":"zero"}">${a.red}</span></td><td class="n">${fmtDur(a.inter)}</td><td class="n">${fmtDur(a.span)}</td></tr>`;
+  }
+  $("#sDrv").innerHTML=h+(drvList.length?"":`<tr class="empty-row"><td colspan="15">Keine Umlagerungen im Filter.</td></tr>`)+"</tbody>";
+  $("#sDrv").querySelectorAll("input[data-soll]").forEach(inp=>inp.onchange=()=>{const v=Math.round(+inp.value);if(v>0)STA.soll[inp.dataset.soll]=v;else delete STA.soll[inp.dataset.soll];lsSet(SOLLKEY,JSON.stringify(STA.soll));staRender();});
+  $("#sDrv").querySelectorAll("input[data-csel]").forEach(cb=>cb.onchange=()=>{const n=cb.dataset.csel;if(cb.checked){if(STA.cmp.size>=6){cb.checked=false;toast("Höchstens 6 Fahrer im Vergleich");return;}STA.cmp.add(n);}else STA.cmp.delete(n);staRenderCmp();});
+  staRenderCmp();
+
+  /* Tagesauswertung */
+  if(!D.some(d=>d.key===F.sel))F.sel=D.length?D[0].key:null;
+  h=`<thead><tr><th class="l">Tag</th>${multi?'<th class="l">Fahrer</th>':""}<th>Paletten</th><th>Soll</th><th>Erste</th><th>Letzte</th><th>Arbeitszeit</th><th>Paletten / Std</th><th>Ø Abstand</th><th>Längster Abstand</th><th>über 15 Min.</th><th>ab 30 Min.</th><th>Unterbrechungszeit</th><th>Begründet</th><th class="l">Mandanten</th></tr></thead><tbody>`;
+  for(const d of D){
+    const soll=sollOf(d.drv);
+    h+=`<tr data-k="${esc(d.key)}" class="${d.key===F.sel?"sel":""}"><td class="l">${dayLong(d.day)}</td>${multi?`<td class="l name">${esc(d.drv)}</td>`:""}<td><span class="gp ${sollCls(d.n,soll)}">${fmt(d.n)}</span></td><td class="n">${soll?fmt(soll):'<span class="dim">–</span>'}</td><td class="n">${hms(d.start)}</td><td class="n">${hms(d.end)}</td><td class="n">${fmtDur(d.span)}</td><td class="n">${fmt1(d.span>0?d.n/(d.span/60):null)}</td><td>${gapPill(d.avg)}</td><td title="${d.maxAt?hms(d.maxAt.prev.t)+" → "+hms(d.maxAt.t):""}">${gapPill(d.max)}</td><td><span class="cnt ${d.yel?"mid":"zero"}">${d.yel}</span></td><td><span class="cnt ${d.red?"low":"zero"}">${d.red}</span></td><td class="n">${fmtDur(d.inter)}</td><td class="n">${d.reasoned?d.reasoned+(STA.excl?" · "+fmtDur(d.exMin):""):'<span class="dim">–</span>'}</td><td class="l mtag">${[...d.mand.entries()].sort((a,b)=>b[1]-a[1]).map(([m,c])=>esc(shortM(m))+" "+c).join(" · ")}</td></tr>`;
+  }
+  if(D.length>1)h+=`<tr style="cursor:default;font-weight:600"><td class="l">Summe</td>${multi?"<td></td>":""}<td class="n">${fmt(A.n)}</td><td></td><td></td><td></td><td class="n">${fmtDur(A.span)}</td><td class="n">${fmt1(A.perHour)}</td><td>${gapPill(A.avg)}</td><td>${gapPill(A.max)}</td><td><span class="cnt ${A.yel?"mid":"zero"}">${A.yel}</span></td><td><span class="cnt ${A.red?"low":"zero"}">${A.red}</span></td><td class="n">${fmtDur(A.inter)}</td><td class="n">${A.reasoned||"–"}</td><td></td></tr>`;
+  $("#sDays").innerHTML=h+(D.length?"":`<tr class="empty-row"><td colspan="15">Keine Umlagerungen im Filter.</td></tr>`)+"</tbody>";
+  $("#sDays").querySelectorAll("tr[data-k]").forEach(tr=>tr.onclick=()=>{F.sel=tr.dataset.k;staRender();$("#sMovesPanel").scrollIntoView({block:"start",behavior:"smooth"});});
+
+  staRenderWeeks();
+  $("#sTimeline").innerHTML=staTimeline(D,multi);
+  const drivers=[...new Set(D.map(d=>d.drv))];
+  $("#sDayLeg").innerHTML=drivers.length>1?drivers.map((d,i)=>`<span><i style="background:${CMPC[i%CMPC.length]}"></i>${esc(d)}</span>`).join(""):"";
+  $("#sDayChart").innerHTML=staDayChart(D,drivers);
+  $("#sHist").innerHTML=staHist(A.gaps);
+  $("#sGapHour").innerHTML=staGapHour(D);
+  const hrs=new Array(24).fill(0);D.forEach(d=>d.moves.forEach(m=>hrs[m.hour]++));
+  $("#sHour").innerHTML=hourChart(hrs,"var(--pack)",A.nd).replace(/ LS gesamt/g," Paletten gesamt");
+  const mm=new Map();D.forEach(d=>d.mand.forEach((c,m)=>mm.set(m,(mm.get(m)||0)+c)));
+  $("#sMand").innerHTML=typeList(mm,"var(--pack)")||'<span class="muted">Keine Daten.</span>';
+
+  /* Kritische Abstände mit Begründung */
+  const crit=D.flatMap(d=>d.moves.filter(m=>m.gap!=null&&m.gap>S_Y).map(m=>({d,m}))).sort((a,b)=>b.m.gap-a.m.gap);
+  STA.crit=crit;
+  const nr=crit.filter(c=>reasonOf(c.m)).length;
+  $("#sCritSub").textContent=`${crit.length} Abstände über 15 Minuten, längste zuerst · ${nr} begründet`+(STA.excl&&nr?" und herausgerechnet":"");
+  h=`<thead><tr><th class="l">Tag</th>${multi?'<th class="l">Fahrer</th>':""}<th>Abstand</th><th>von</th><th>bis</th><th class="l">Palette davor</th><th class="l">Nächste Palette</th><th class="l">Begründung</th><th class="l">Notiz</th></tr></thead><tbody>`;
+  crit.forEach(({d,m},i)=>{
+    const r=reasonOf(m)||{};
+    h+=`<tr data-i="${i}" class="${r.r?"rsn":""}"><td class="l">${dayLong(d.day)}</td>${multi?`<td class="l name">${esc(d.drv)}</td>`:""}<td>${gapPill(m.gap)}${r.r&&STA.excl?'<div class="small">herausgerechnet</div>':""}</td><td class="n">${hms(m.prev.t)}</td><td class="n">${hms(m.t)}</td>`+
+      `<td class="l"><span class="loc">${esc(m.prev.von)} → ${esc(m.prev.nach)}</span> <span class="mtag">${esc(shortM(m.prev.mand))}</span></td><td class="l"><span class="loc">${esc(m.von)} → ${esc(m.nach)}</span> <span class="mtag">${esc(shortM(m.mand))}</span></td>`+
+      `<td class="l"><select data-rs="${i}" aria-label="Begründung"><option value="">– keine –</option>${REASONS.map(x=>`<option ${x===r.r?"selected":""}>${x}</option>`).join("")}</select></td>`+
+      `<td class="l"><input type="text" class="note" data-rn="${i}" value="${esc(r.note||"")}" placeholder="optional" aria-label="Notiz"></td></tr>`;
+  });
+  $("#sCrit").innerHTML=h+(crit.length?"":`<tr class="empty-row"><td colspan="9">Keine Abstände über 15 Minuten im Filter.</td></tr>`)+"</tbody>";
+  const saveR=(i,patch)=>{const m=crit[i].m;const k=gkey(m);const cur=Object.assign({},STA.reasons[k]||{},patch);
+    if(!cur.r&&!cur.note)delete STA.reasons[k];else STA.reasons[k]=cur;lsSet(RKEY,JSON.stringify(STA.reasons));};
+  $("#sCrit").querySelectorAll("select[data-rs]").forEach(s=>s.onchange=()=>{saveR(+s.dataset.rs,{r:s.value});staRender();});
+  $("#sCrit").querySelectorAll("input[data-rn]").forEach(inp=>inp.onchange=()=>{const i=+inp.dataset.rn;const m=crit[i].m;const cur=STA.reasons[gkey(m)]||{};
+    saveR(i,{note:inp.value.trim(),r:cur.r||(inp.value.trim()?"Sonstiges":"")});staRender();});
+  $("#sCrit").querySelectorAll("tr[data-i]").forEach(tr=>tr.onclick=e=>{if(e.target.closest("select,input"))return;F.sel=crit[+tr.dataset.i].d.key;staRender();$("#sMovesPanel").scrollIntoView({block:"start",behavior:"smooth"});});
+
+  /* Detail */
+  $("#sDayPick").innerHTML=D.map(d=>`<button class="chip ${d.key===F.sel?"on":""}" data-k="${esc(d.key)}">${WD[wday(d.day)]} ${dayLabel(d.day)}${multi?" · "+esc(d.drv):""} <b>${d.n}</b></button>`).join("");
+  $("#sDayPick").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{F.sel=b.dataset.k;staRender();});
+  const sd=D.find(d=>d.key===F.sel);
+  h=`<thead><tr><th>#</th><th>Uhrzeit</th><th>Abstand</th><th class="l">Begründung</th><th class="l">Mandant</th><th class="l">von Lagerplatz</th><th class="l">nach Lagerplatz</th><th>LS-Nummer</th></tr></thead><tbody>`;
+  if(sd)for(const m of sd.moves){const r=reasonOf(m);
+    h+=`<tr style="cursor:default"><td class="rank" style="text-align:center">${m.idx}</td><td class="n">${hms(m.t)}</td><td>${m.gap==null?'<span class="gp none">Start</span>':gapPill(m.gap)}</td><td class="l mtag">${r?esc(r.r+(r.note?" · "+r.note:"")):""}</td><td class="l">${esc(shortM(m.mand))}</td><td class="l loc">${esc(m.von||"–")}</td><td class="l loc">${esc(m.nach||"–")}</td><td class="n">${esc(m.ls||"–")}</td></tr>`;}
+  $("#sMoves").innerHTML=h+(sd?"":`<tr class="empty-row"><td colspan="8">Keine Umlagerungen im Filter.</td></tr>`)+"</tbody>";
+  $("#sFoot").innerHTML=`<span>Abstand = Zeit zwischen zwei aufeinanderfolgenden Umlagerungen desselben Fahrers am selben Tag. Ampel: bis 15 Min. grün, über 15 Min. gelb, ab 30 Min. rot. Unterbrechungszeit = Summe aller Abstände über 15 Min. Arbeitszeit = erste bis letzte Umlagerung des Tages${STA.excl?", abzüglich begründeter Abstände":""}.</span><span>Soll-Ampel: grün ab Soll, gelb ab 85 % davon, sonst rot. Soll-Werte und Begründungen werden in diesem Browser gespeichert und beim nächsten Laden derselben Datei wieder angezeigt. Die gebuchte Zeit aus der Spalte „Zeit“ wird nicht verwendet.</span>`;
+}
+
+/* Fahrer-Vergleich */
+function staRenderCmp(){
+  const list=STA.drvList||[];const byName=new Map(list.map(x=>[x.name,x]));
+  const names=[...STA.cmp];const color=n=>CMPC[names.indexOf(n)%CMPC.length];
+  const opts=list.filter(x=>!STA.cmp.has(x.name));
+  $("#sCmpAdd").innerHTML=`<option value="">+ Fahrer hinzufügen</option>`+opts.map(x=>`<option value="${esc(x.name)}">${esc(x.name)} (${fmt(x.a.n)})</option>`).join("");
+  $("#sCmpAdd").disabled=names.length>=6||!opts.length;
+  $("#sDrv").querySelectorAll("input[data-csel]").forEach(cb=>cb.checked=STA.cmp.has(cb.dataset.csel));
+  if(!names.length){$("#sCmp").innerHTML=`<div class="hint">Setze in der Fahrer-Übersicht ein Häkchen bei bis zu 6 Fahrern oder wähle sie oben rechts aus. Dann siehst du sie hier nebeneinander.</div>`;return;}
+  const top=`<div class="cmp-top">${names.map(n=>`<span class="pchip"><i style="background:${color(n)}"></i>${esc(n)}<button data-rm="${esc(n)}" aria-label="${esc(n)} entfernen">×</button></span>`).join("")}<button class="linkbtn" id="sCmpClr">Auswahl leeren</button></div>`;
+  const X=names.map(n=>byName.get(n));
+  const hdr=`<thead><tr><th class="l"></th>${names.map(n=>`<th><span class="hd" title="${esc(n)}"><i style="background:${color(n)}"></i>${esc(n)}</span></th>`).join("")}</tr></thead>`;
+  const rows=[
+    ["Arbeitstage",x=>fmt(x.a.days)],["Paletten",x=>fmt(x.a.n)],["Ø Paletten / Tag",x=>`<span class="gp ${sollCls(x.a.perDay,sollOf(x.name))}">${fmt1(x.a.perDay)}</span>`],
+    ["Soll / Tag",x=>sollOf(x.name)?fmt(sollOf(x.name)):"–"],["Zielerfüllung",x=>sollOf(x.name)?Math.round(x.a.perDay/sollOf(x.name)*100)+" %":"–"],
+    ["Paletten / Std",x=>fmt1(x.a.perHour)],["Ø Abstand",x=>gapPill(x.a.avg)],["Median Abstand",x=>gapPill(x.a.med)],["Längster Abstand",x=>gapPill(x.a.max)],
+    ["über 15 Min.",x=>`<span class="cnt ${x.a.yel?"mid":"zero"}">${x.a.yel}</span>`],["ab 30 Min.",x=>`<span class="cnt ${x.a.red?"low":"zero"}">${x.a.red}</span>`],
+    ["Ø Unterbrechungen / Tag",x=>fmt1((x.a.yel+x.a.red)/x.a.days)],["Unterbrechungszeit",x=>fmtDur(x.a.inter)],["Anteil an Arbeitszeit",x=>pct(x.a.inter,x.a.span)],["Arbeitszeit",x=>fmtDur(x.a.span)]
+  ];
+  let kt=`<table class="ct">${hdr}<tbody>`+rows.map(([l,f])=>`<tr><td class="l">${l}</td>${X.map(x=>x?`<td class="n">${f(x)}</td>`:`<td class="n dim" title="im aktuellen Filter keine Daten">–</td>`).join("")}</tr>`).join("")+"</tbody></table>";
+  const mt=new Map();X.forEach(x=>x&&x.ds.forEach(d=>d.mand.forEach((c,m)=>mt.set(m,(mt.get(m)||0)+c))));
+  const ms=[...mt.entries()].sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+  let tt=`<table class="ct">${hdr}<tbody>`;
+  for(const m of ms){tt+=`<tr><td class="l">${esc(shortM(m))}</td>${X.map((x,i)=>{if(!x)return `<td class="n dim">–</td>`;const v=x.ds.reduce((a,d)=>a+(d.mand.get(m)||0),0);if(!v)return `<td class="n dim">·</td>`;
+    return `<td class="n"><div class="tc"><span>${fmt(v)}</span><span class="bar"><i style="width:${(v/x.a.n*100).toFixed(1)}%;background:${color(names[i])}"></i></span><small>${pct(v,x.a.n)}</small></div></td>`;}).join("")}</tr>`;}
+  tt+=`<tr class="sumr"><td class="l">Summe</td>${X.map(x=>`<td class="n">${x?fmt(x.a.n):"–"}</td>`).join("")}</tr></tbody></table>`;
+  // Tageskurve
+  const days=[...new Set(X.flatMap(x=>x?x.ds.map(d=>d.day):[]))].sort();
+  let chart='<span class="muted">Keine Daten.</span>';
+  if(days.length){
+    const W=1000,H=230,L=46,R=12,T=14,B=36,iw=W-L-R,ih=H-T-B,step=iw/days.length;
+    let mx=1;X.forEach(x=>x&&x.ds.forEach(d=>{if(d.n>mx)mx=d.n;}));names.forEach(n=>{const s=sollOf(n);if(s&&s>mx)mx=s;});
+    const max=niceMax(mx),y=v=>T+ih-v/max*ih,xx=i=>L+step*i+step/2;
+    chart=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Paletten pro Tag im Vergleich">`;
+    for(let i=0;i<=4;i++){const v=max*i/4,yy=y(v);chart+=`<line class="gridl" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text class="axis" x="${L-6}" y="${yy+3}" text-anchor="end">${fmt(v)}</text>`;}
+    days.forEach((d,i)=>chart+=`<text class="axis" x="${xx(i)}" y="${H-B+16}" text-anchor="middle">${WD[wday(d)]} ${dayLabel(d)}</text>`);
+    X.forEach((x,k)=>{if(!x)return;const c=color(names[k]);const s=sollOf(names[k]);
+      if(s)chart+=`<line x1="${L}" x2="${W-R}" y1="${y(s)}" y2="${y(s)}" stroke="${c}" stroke-dasharray="5 5" stroke-width="1.2" opacity=".7"/>`;
+      const pts=days.map((d,i)=>{const v=x.ds.find(z=>z.day===d);return v?[xx(i),y(v.n)]:null;});
+      let seg=[];const flush=()=>{if(seg.length>1)chart+=`<polyline points="${seg.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ")}" fill="none" stroke="${c}" stroke-width="2"/>`;seg=[];};
+      pts.forEach(p=>{if(p)seg.push(p);else flush();});flush();
+      pts.forEach(p=>{if(p)chart+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.2" fill="${c}"/>`;});});
+    days.forEach((d,i)=>{const lines=names.map((n,k)=>{const x=X[k];const v=x&&x.ds.find(z=>z.day===d);return n+": "+(v?v.n+" Paletten":"–");});
+      chart+=`<rect x="${L+step*i}" y="${T}" width="${step}" height="${ih}" fill="transparent" data-tip="${esc(dayLong(d)+"|"+lines.join("|"))}"/>`;});
+    chart+=`<line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" stroke="var(--line2)"/></svg>`;
+  }
+  $("#sCmp").innerHTML=top+`<div class="cmp-grid"><div style="min-width:0"><h4>Kennzahlen</h4><div style="overflow-x:auto">${kt}</div></div><div style="min-width:0"><h4>Mandanten · Anzahl und Anteil</h4><div style="overflow-x:auto">${tt}</div></div></div><div class="cmp-chart"><h4>Paletten pro Tag · gestrichelt = Soll</h4>${chart}</div>`;
+  $("#sCmp").querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{STA.cmp.delete(b.dataset.rm);staRenderCmp();});
+  $("#sCmpClr").onclick=()=>{STA.cmp.clear();staRenderCmp();};
+}
+$("#sCmpAdd").onchange=e=>{const n=e.target.value;e.target.value="";if(!n)return;if(STA.cmp.size>=6){toast("Höchstens 6 Fahrer im Vergleich");return;}STA.cmp.add(n);staRenderCmp();};
+
+/* Wochenvergleich */
+function staWeekRows(){
+  const F=STA.f;const W=new Map();
+  for(const d of STA.days){if(!F.drivers.has(d.drv))continue;const k=d.drv+"|"+d.wk;if(!W.has(k))W.set(k,{drv:d.drv,wk:d.wk,ds:[]});W.get(k).ds.push(d);}
+  const rows=[...W.values()].map(r=>Object.assign(r,{a:staAgg(r.ds)}));
+  rows.sort((a,b)=>a.drv.localeCompare(b.drv,"de")||(a.wk<b.wk?-1:1));
+  const idx=new Map(rows.map(r=>[r.drv+"|"+r.wk,r]));
+  rows.forEach(r=>r.prev=idx.get(r.drv+"|"+prevWeekKey(r.wk))||null);
+  return rows;
+}
+function staRenderWeeks(){
+  const rows=staWeekRows();const multi=new Set(rows.map(r=>r.drv)).size>1;
+  let h=`<thead><tr>${multi?'<th class="l">Fahrer</th>':""}<th class="l">Woche</th><th class="l">Zeitraum</th><th>Tage</th><th>Paletten</th><th>Ø Paletten / Tag</th><th>Δ Vorwoche</th><th>Paletten / Std</th><th>Ø Abstand</th><th>Δ Vorwoche</th><th>über 15 Min.</th><th>ab 30 Min.</th><th>Δ rot</th><th>Unterbrechungszeit</th></tr></thead><tbody>`;
+  for(const r of rows){const a=r.a,p=r.prev?r.prev.a:null;const ds=r.ds.map(d=>d.day).sort();
+    h+=`<tr style="cursor:default">${multi?`<td class="l name">${esc(r.drv)}</td>`:""}<td class="l" style="font-weight:600">${kwLabel(r.wk)}</td><td class="l mtag">${dShort(ds[0])} – ${dShort(ds[ds.length-1])}</td><td class="n">${a.days}</td><td class="n">${fmt(a.n)}</td>`+
+      `<td><span class="gp ${sollCls(a.perDay,sollOf(r.drv))}">${fmt1(a.perDay)}</span></td><td>${p?deltaHtml(a.perDay,p.perDay,false,fmt1):'<span class="dim">keine Vorwoche</span>'}</td><td class="n">${fmt1(a.perHour)}</td>`+
+      `<td>${gapPill(a.avg)}</td><td>${p?deltaHtml(a.avg,p.avg,true,v=>fmtGap(v)):'<span class="dim">–</span>'}</td><td><span class="cnt ${a.yel?"mid":"zero"}">${a.yel}</span></td><td><span class="cnt ${a.red?"low":"zero"}">${a.red}</span></td>`+
+      `<td>${p?deltaHtml(a.red,p.red,true,v=>fmt(v)):'<span class="dim">–</span>'}</td><td class="n">${fmtDur(a.inter)}</td></tr>`;}
+  const single=new Set(rows.map(r=>r.wk)).size<2;
+  $("#sWeeks").innerHTML=h+(rows.length?"":`<tr class="empty-row"><td colspan="14">Keine Daten.</td></tr>`)+"</tbody>"+(single&&rows.length?`<tfoot><tr><td colspan="14" class="hint" style="text-align:center;padding:10px">Lade eine weitere Woche desselben Fahrers, dann siehst du hier die Veränderung zur Vorwoche.</td></tr></tfoot>`:"");
+}
+
+function staTimeline(D,multi){
+  if(!D.length)return '<span class="muted">Keine Daten im Filter.</span>';
+  const lo=Math.floor(Math.min(...D.map(d=>d.start))),hi=Math.ceil(Math.max(...D.map(d=>d.end))+0.001);
+  const W=1000,LW=multi?170:110,R=60,rowH=34,T=22,H=T+rowH*D.length+6,iw=W-LW-R;
+  const x=t=>LW+(t-lo)/(hi-lo)*iw;
+  let s=`<div class="tlw"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Zeitstrahl der Umlagerungen">`;
+  for(let hr=lo;hr<=hi;hr++){s+=`<line class="gridl" x1="${x(hr)}" x2="${x(hr)}" y1="${T-4}" y2="${H-4}"/><text class="axis" x="${x(hr)}" y="${T-8}" text-anchor="middle">${String(hr).padStart(2,"0")}:00</text>`;}
+  D.forEach((d,i)=>{
+    const cy=T+rowH*i+rowH/2;
+    s+=`<text class="axis" x="4" y="${cy+4}" style="font-size:11px;fill:var(--fg)">${WD[wday(d.day)]} ${dayLabel(d.day)}${multi?" · "+esc(d.drv.length>12?d.drv.slice(0,12)+"…":d.drv):""}</text>`;
+    s+=`<line x1="${x(d.start)}" x2="${x(d.end)}" y1="${cy}" y2="${cy}" stroke="var(--line2)" stroke-width="2"/>`;
+    for(const m of d.moves){
+      if(m.gap!=null&&m.gap>S_Y){const r=reasonOf(m);const c=r?"var(--leih)":m.gap>=S_R?"var(--warn)":"var(--pick)";
+        s+=`<rect x="${x(m.prev.t)}" y="${cy-7}" width="${Math.max(2,x(m.t)-x(m.prev.t))}" height="14" rx="3" fill="${c}" opacity=".85" data-tip="${esc(dayLong(d.day)+"|"+hms(m.prev.t)+" → "+hms(m.t)+"|Abstand "+fmtGap(m.gap)+(r?"|Begründung: "+r.r+(r.note?" · "+r.note:""):""))}"/>`;}
+    }
+    for(const m of d.moves)s+=`<line x1="${x(m.t).toFixed(1)}" x2="${x(m.t).toFixed(1)}" y1="${cy-10}" y2="${cy+10}" stroke="var(--pack)" stroke-width="1.6" data-tip="${esc(hms(m.t)+" · Palette "+m.idx+"|"+m.von+" → "+m.nach+"|"+shortM(m.mand)+(m.gap!=null?"|Abstand "+fmtGap(m.gap):""))}"/>`;
+    s+=`<text class="axis" x="${W-4}" y="${cy+4}" text-anchor="end">${d.n} Pal.</text>`;
+  });
+  return s+"</svg></div>";
+}
+function staDayChart(D,drivers){
+  const days=[...new Set(D.map(d=>d.day))].sort();if(!days.length)return '<span class="muted">Keine Daten im Filter.</span>';
+  const tot=days.map(day=>D.filter(d=>d.day===day).reduce((a,d)=>a+d.n,0));
+  const W=1000,H=250,L=46,R=12,T=18,B=36,iw=W-L-R,ih=H-T-B,step=iw/days.length,bw=Math.min(70,step*.6);
+  const solo=drivers.length===1?sollOf(drivers[0]):null;
+  const max=niceMax(Math.max(...tot,solo||0)),y=v=>T+ih-v/max*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Paletten pro Tag">`;
+  for(let i=0;i<=4;i++){const v=max*i/4,yy=y(v);s+=`<line class="gridl" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text class="axis" x="${L-6}" y="${yy+3}" text-anchor="end">${fmt(v)}</text>`;}
+  days.forEach((day,i)=>{const cx=L+step*i+step/2;let acc=0;const tips=[dayLong(day)];
+    drivers.forEach((dr,k)=>{const d=D.find(z=>z.day===day&&z.drv===dr);if(!d)return;const y0=y(acc),y1=y(acc+d.n);
+      s+=`<rect x="${cx-bw/2}" y="${y1}" width="${bw}" height="${Math.max(0,y0-y1)}" fill="${drivers.length>1?CMPC[k%CMPC.length]:"var(--pack)"}" rx="2"/>`;acc+=d.n;
+      tips.push((drivers.length>1?dr+": ":"")+d.n+" Paletten · "+d.yel+" gelb · "+d.red+" rot");});
+    s+=`<text class="axis" x="${cx}" y="${y(acc)-5}" text-anchor="middle" style="fill:var(--fg)">${acc}</text>`;
+    s+=`<text class="axis" x="${cx}" y="${H-B+16}" text-anchor="middle">${WD[wday(day)]} ${dayLabel(day)}</text>`;
+    s+=`<rect x="${L+step*i}" y="${T}" width="${step}" height="${ih}" fill="transparent" data-tip="${esc(tips.join("|"))}"/>`;});
+  if(solo)s+=`<line x1="${L}" x2="${W-R}" y1="${y(solo)}" y2="${y(solo)}" stroke="var(--fg)" stroke-dasharray="6 5" opacity=".6"/><text class="axis" x="${W-R}" y="${y(solo)-5}" text-anchor="end" style="fill:var(--fg)">Soll ${solo}</text>`;
+  s+=`<line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" stroke="var(--line2)"/>`;
+  return s+"</svg>";
+}
+function staHist(gaps){
+  if(!gaps.length)return '<span class="muted">Keine Abstände im Filter.</span>';
+  const B=[["bis 5 Min.",0,5,"var(--pack)"],["5–10",5,10,"var(--pack)"],["10–15",10,15.0000001,"var(--pack)"],["15–30",15.0000001,30,"var(--pick)"],["30–60",30,60,"var(--warn)"],["über 60",60,1e9,"var(--warn)"]];
+  const c=B.map(b=>gaps.filter(g=>g>=b[1]&&g<b[2]).length);
+  const W=520,H=230,L=34,R=8,T=18,Bm=34,iw=W-L-R,ih=H-T-Bm,step=iw/B.length,bw=step*.62;
+  const max=niceMax(Math.max(...c)),y=v=>T+ih-v/max*ih;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Verteilung der Abstände">`;
+  for(let i=0;i<=2;i++){const v=max*i/2,yy=y(v);s+=`<line class="gridl" x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text class="axis" x="${L-5}" y="${yy+3}" text-anchor="end">${fmt(v)}</text>`;}
+  B.forEach((b,i)=>{const cx=L+step*i+step/2;
+    s+=`<rect x="${cx-bw/2}" y="${y(c[i])}" width="${bw}" height="${T+ih-y(c[i])}" fill="${b[3]}" rx="2" data-tip="${esc(b[0]+"|"+c[i]+" Abstände · "+pct(c[i],gaps.length))}"/>`;
+    s+=`<text class="axis" x="${cx}" y="${y(c[i])-5}" text-anchor="middle" style="fill:var(--fg)">${c[i]}</text><text class="axis" x="${cx}" y="${H-Bm+16}" text-anchor="middle">${b[0]}</text>`;});
+  s+=`<line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" stroke="var(--line2)"/>`;
+  return s+"</svg>";
+}
+function staGapHour(D,print){
+  const yel=new Array(24).fill(0),red=new Array(24).fill(0),mins=new Array(24).fill(0);
+  D.forEach(d=>d.gapMoves.forEach(m=>{if(m.gap>S_Y){const h=Math.floor(m.prev.t);(m.gap>=S_R?red:yel)[h]++;mins[h]+=m.gap;}}));
+  const act=new Array(24).fill(0);D.forEach(d=>d.moves.forEach(m=>act[m.hour]++));
+  const lo=act.findIndex(v=>v>0),hi=23-[...act].reverse().findIndex(v=>v>0);
+  if(lo<0)return '<span class="muted">Keine Daten im Filter.</span>';
+  if(!yel.some(v=>v)&&!red.some(v=>v))return '<span class="muted">Keine Abstände über 15 Minuten im Filter.</span>';
+  const W=print?420:1000,H=print?190:220,L=34,R=10,T=16,B=30,n=hi-lo+1,iw=W-L-R,ih=H-T-B,step=iw/n,bw=step*.62;
+  const tot=yel.map((v,i)=>v+red[i]);const max=niceMax(Math.max(...tot)),y=v=>T+ih-v/max*ih;
+  const cY=print?"#c8c8c8":"var(--pick)",cR=print?"#8c8c8c":"var(--warn)",ax=print?' style="fill:#8a8a8a;font-family:IBM Plex Sans,Arial,sans-serif"':"";
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Unterbrechungen nach Uhrzeit">`;
+  for(let i=0;i<=2;i++){const v=max*i/2,yy=y(v);s+=`<line ${print?'stroke="#ddd"':'class="gridl"'} x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text class="axis"${ax} x="${L-5}" y="${yy+3}" text-anchor="end">${fmt(v)}</text>`;}
+  for(let hr=lo;hr<=hi;hr++){const i=hr-lo,cx=L+step*i+step/2;const hh=String(hr).padStart(2,"0");
+    const y1=y(red[hr]),y2=y(red[hr]+yel[hr]);
+    if(red[hr])s+=`<rect x="${cx-bw/2}" y="${y1}" width="${bw}" height="${T+ih-y1}" fill="${cR}" rx="2"/>`;
+    if(yel[hr])s+=`<rect x="${cx-bw/2}" y="${y2}" width="${bw}" height="${y1-y2}" fill="${cY}" rx="2"/>`;
+    if(tot[hr])s+=`<text class="axis"${print?' style="fill:#111"':' style="fill:var(--fg)"'} x="${cx}" y="${y2-4}" text-anchor="middle">${tot[hr]}</text>`;
+    s+=`<text class="axis"${ax} x="${cx}" y="${H-B+14}" text-anchor="middle">${hh}</text>`;
+    if(!print)s+=`<rect x="${L+step*i}" y="${T}" width="${step}" height="${ih}" fill="transparent" data-tip="${esc(hh+":00–"+hh+":59|"+yel[hr]+" gelb · "+red[hr]+" rot|"+fmtDur(mins[hr])+" Unterbrechung")}"/>`;}
+  s+=`<line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" stroke="${print?"#999":"var(--line2)"}"/>`;
+  return s+"</svg>";
+}
+
+/* ---------- Excel-Export Stapler ---------- */
+function staExport(){
+  if(typeof XLSX==="undefined"||!STA.days.length)return;
+  const F=STA.f;const D=STA.days.filter(d=>d.day>=F.from&&d.day<=F.to&&F.drivers.has(d.drv));const A=staAgg(D);
+  const wb=XLSX.utils.book_new();const r1n=v=>v==null||!isFinite(v)?null:Math.round(v*10)/10;
+  const ov=[["Stapler-Auswertung · Umlagerung"],[],["Fahrer",[...F.drivers].join(", ")],["Zeitraum",dShort(F.from)+" – "+dShort(F.to)],["Begründete Abstände",STA.excl?"herausgerechnet":"mitgezählt"],["Dateien",STA.files.map(f=>f.name).join(", ")],[],
+    ["Kennzahl","Wert"],["Paletten umgelagert",A.n],["Arbeitstage (Fahrer-Tage)",A.days],["Ø Paletten pro Tag",r1n(A.perDay)],["Paletten pro Std",r1n(A.perHour)],["Ø Abstand (Min.)",r1n(A.avg)],["Median Abstand (Min.)",r1n(A.med)],
+    ["Abstände über 15 Min. (gelb)",A.yel],["Abstände ab 30 Min. (rot)",A.red],["Unterbrechungszeit (Min.)",Math.round(A.inter)],["Arbeitszeit (Min.)",Math.round(A.span)],["Längster Abstand (Min.)",r1n(A.max)],["Begründete Abstände",A.reasoned],[],
+    ["Ampel: bis 15 Min. grün, über 15 Min. gelb, ab 30 Min. rot. Soll-Ampel: grün ab Soll, gelb ab 85 %."]];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ov),"Übersicht");
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([["Fahrer","Tage","Paletten","Ø Paletten/Tag","Soll/Tag","Zielerfüllung %","Paletten/Std","Ø Abstand Min.","Median Min.","Längster Min.","über 15 Min.","ab 30 Min.","Unterbrechung Min.","Arbeitszeit Min."],
+    ...(STA.drvList||[]).map(({name,a})=>{const s=sollOf(name);return [name,a.days,a.n,r1n(a.perDay),s,s?Math.round(a.perDay/s*100):null,r1n(a.perHour),r1n(a.avg),r1n(a.med),r1n(a.max),a.yel,a.red,Math.round(a.inter),Math.round(a.span)];})]),"Fahrer");
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([["Tag","Fahrer","Paletten","Soll","Erste","Letzte","Arbeitszeit Min.","Paletten/Std","Ø Abstand Min.","Längster Min.","über 15 Min.","ab 30 Min.","Unterbrechung Min.","Begründet","Mandanten"],
+    ...D.map(d=>[dayLong(d.day),d.drv,d.n,sollOf(d.drv),hms(d.start),hms(d.end),Math.round(d.span),r1n(d.span>0?d.n/(d.span/60):null),r1n(d.avg),r1n(d.max),d.yel,d.red,Math.round(d.inter),d.reasoned,[...d.mand.entries()].map(([m,c])=>shortM(m)+" "+c).join(", ")])]),"Tage");
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([["Fahrer","Woche","Tage","Paletten","Ø Paletten/Tag","Vorwoche Ø/Tag","Paletten/Std","Ø Abstand Min.","über 15 Min.","ab 30 Min.","Vorwoche rot","Unterbrechung Min."],
+    ...staWeekRows().map(r=>[r.drv,kwLabel(r.wk),r.a.days,r.a.n,r1n(r.a.perDay),r.prev?r1n(r.prev.a.perDay):null,r1n(r.a.perHour),r1n(r.a.avg),r.a.yel,r.a.red,r.prev?r.prev.a.red:null,Math.round(r.a.inter)])]),"Wochen");
+  const crit=D.flatMap(d=>d.moves.filter(m=>m.gap!=null&&m.gap>S_Y).map(m=>({d,m}))).sort((a,b)=>b.m.gap-a.m.gap);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([["Tag","Fahrer","Abstand Min.","Ampel","von","bis","Palette davor","Mandant davor","Nächste Palette","Mandant danach","Begründung","Notiz","Herausgerechnet"],
+    ...crit.map(({d,m})=>{const r=reasonOf(m)||{};return [dayLong(d.day),d.drv,r1n(m.gap),m.gap>=S_R?"rot":"gelb",hms(m.prev.t),hms(m.t),m.prev.von+" → "+m.prev.nach,shortM(m.prev.mand),m.von+" → "+m.nach,shortM(m.mand),r.r||"",r.note||"",r.r&&STA.excl?"ja":"nein"];})]),"Kritische Abstände");
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([["Tag","Fahrer","#","Uhrzeit","Abstand Min.","Ampel","Mandant","von Lagerplatz","nach Lagerplatz","LS-Nummer","Begründung","Datei"],
+    ...D.flatMap(d=>d.moves.map(m=>{const r=reasonOf(m);return [dayLong(d.day),d.drv,m.idx,hms(m.t),m.gap==null?null:r1n(m.gap),m.gap==null?"Start":m.gap>=S_R?"rot":m.gap>S_Y?"gelb":"grün",shortM(m.mand),m.von,m.nach,m.ls,r?r.r+(r.note?" · "+r.note:""):"",m.file];}))]),"Umlagerungen");
+  const safe=s=>String(s||"").replace(/[^\wäöüÄÖÜß-]+/g,"_");
+  XLSX.writeFile(wb,`Stapler_${safe([...F.drivers].join("_"))}_${F.from}_${F.to}.xlsx`);
+  toast("Excel-Datei erstellt");
+}
+$("#sBtnExp").onclick=staExport;
+
+/* ---------- Gesprächsbogen ---------- */
+function openBogen(){
+  const drivers=[...new Set(STA.base.map(d=>d.drv))].sort((a,b)=>a.localeCompare(b,"de"));
+  const F=STA.f;const pre=[...F.drivers].find(d=>drivers.includes(d))||drivers[0];
+  const periods=drv=>{const ws=[...new Set(STA.base.filter(d=>d.drv===drv).map(d=>d.wk))].sort().reverse();
+    return [...ws.map(w=>{const ds=STA.base.filter(d=>d.drv===drv&&d.wk===w).map(d=>d.day).sort();return {v:"w:"+w,l:`${kwLabel(w)} · ${dShort(ds[0])} – ${dShort(ds[ds.length-1])}`};}),{v:"f",l:`Aktueller Filter · ${dShort(F.from)} – ${dShort(F.to)}`}];};
+  openDrawer(`<div class="dh"><h3>Gesprächsbogen</h3><button class="x" aria-label="Schließen">×</button></div><div class="db">
+    <div class="sect"><p>Seite 1 fasst alles Wichtige für das Gespräch auf einer A4-Seite zusammen. Auf Wunsch folgt ein Anhang mit dem Uhrzeit-Muster und allen Abständen über 15 Minuten. Im Druckdialog kannst du auch „Als PDF speichern“ wählen.</p></div>
+    <div class="sect"><h4>Fahrer</h4><select id="bDrv" style="width:100%">${drivers.map(d=>`<option ${d===pre?"selected":""}>${esc(d)}</option>`).join("")}</select></div>
+    <div class="sect"><h4>Zeitraum</h4><select id="bPer" style="width:100%"></select><p style="margin-top:8px" id="bPerHint"></p></div>
+    <div class="sect"><label class="switch" for="bAnh"><input type="checkbox" id="bAnh" checked><span class="sw"></span><span>Anhang mit Details (ab Seite 2)</span></label></div>
+    <div class="sect"><p>Begründete Abstände werden ${STA.excl?"herausgerechnet":"mitgezählt"}, wie im Schalter oben eingestellt.</p></div>
+    <div class="sect"><button class="btn primary" id="bGo" type="button">Gesprächsbogen drucken</button></div>
+  </div>`);
+  const fill=()=>{const ps=periods($("#bDrv").value);$("#bPer").innerHTML=ps.map(p=>`<option value="${p.v}">${esc(p.l)}</option>`).join("");hint();};
+  const hint=()=>{$("#bPerHint").textContent=$("#bPer").value==="f"?"Beim freien Zeitraum gibt es keinen Vergleich zur Vorwoche.":"Vergleich zur Vorwoche erscheint, wenn die Vorwoche dieses Fahrers geladen ist.";};
+  $("#bDrv").onchange=fill;$("#bPer").onchange=hint;fill();
+  $("#bGo").onclick=()=>{buildBogen($("#bDrv").value,$("#bPer").value,$("#bAnh").checked);closeDrawer();setTimeout(()=>window.print(),60);};
+}
+$("#sBtnBogen").onclick=openBogen;
+
+function buildBogen(drv,per,anhang){
+  const F=STA.f;let from,to,wk=null;
+  if(per.startsWith("w:")){wk=per.slice(2);const ds=STA.base.filter(d=>d.drv===drv&&d.wk===wk).map(d=>d.day).sort();from=ds[0];to=ds[ds.length-1];}else{from=F.from;to=F.to;}
+  const D=STA.days.filter(d=>d.drv===drv&&d.day>=from&&d.day<=to);const A=staAgg(D);
+  const P=wk?STA.days.filter(d=>d.drv===drv&&d.wk===prevWeekKey(wk)):[];const PA=P.length?staAgg(P):null;
+  const soll=sollOf(drv);
+  const today=new Date();const td=String(today.getDate()).padStart(2,"0")+"."+String(today.getMonth()+1).padStart(2,"0")+"."+today.getFullYear();
+  const period=`${wk?kwLabel(wk)+" · ":""}${dShort(from)} – ${dShort(to)}`;
+  const day=d=>`${WD[wday(d)]} ${dayLabel(d)}`;
+  const head=sub=>`<header class="bh"><div><div class="bk">Leistungsauswertung Stapler${sub?" · "+sub:""}</div><div class="bn">${esc(drv)}</div></div><div class="bm"><div><span>Zeitraum</span>${period}</div><div><span>Erstellt</span>${td}</div></div></header>`;
+  const crit=D.flatMap(d=>d.moves.filter(m=>m.gap!=null&&m.gap>S_Y).map(m=>({d,m}))).sort((a,b)=>b.m.gap-a.m.gap);
+  const rsn=m=>{const r=reasonOf(m);return r?esc(r.r)+(r.note?` <span class="bmut">· ${esc(r.note)}</span>`:""):'<span class="bmut">–</span>';};
+  const nInt=A.yel+A.red;
+
+  let h=`<section class="bp">`+head("");
+
+  /* 1 · Zusammenfassung */
+  const card=(l,v,s)=>`<div class="bc"><div class="bcl">${l}</div><div class="bcv">${v}</div><div class="bcs">${s}</div></div>`;
+  h+=`<div class="bs">Zusammenfassung</div><div class="bcg">`+
+    card("Paletten umgelagert",fmt(A.n),`an ${A.days} ${A.days===1?"Arbeitstag":"Arbeitstagen"}`)+
+    card("Ø Paletten pro Tag",fmt1(A.perDay),soll?`${Math.round(A.perDay/soll*100)} % vom Soll (${soll})`:"kein Soll hinterlegt")+
+    card("Paletten pro Stunde",fmt1(A.perHour),`bei ${fmtDur(A.span)} Arbeitszeit`)+
+    card("Unterbrechungen",fmt(nInt),`über 15 Min., davon ${A.red} über 30 Min.`)+
+    `</div>`;
+
+  /* 2 · Tagesübersicht */
+  h+=`<div class="bs">Tagesübersicht</div><table class="bt"><thead><tr><th class="l">Tag</th><th>Paletten</th>${soll?"<th>vom Soll</th>":""}<th>Arbeitszeit</th><th>Paletten / Std</th><th>Ø Abstand</th><th>Unterbrechungen</th><th>davon über 30 Min.</th><th>Unterbrechungszeit</th></tr></thead><tbody>`+
+    D.map(d=>`<tr><td class="l">${day(d.day)}</td><td>${fmt(d.n)}</td>${soll?`<td>${Math.round(d.n/soll*100)} %</td>`:""}<td>${fmtDur(d.span)}</td><td>${fmt1(d.span>0?d.n/(d.span/60):null)}</td><td>${fmtGap(d.avg)}</td><td>${d.yel+d.red}</td><td>${d.red}</td><td>${fmtDur(d.inter)}</td></tr>`).join("")+
+    (D.length>1?`<tr class="bsum"><td class="l">Gesamt</td><td>${fmt(A.n)}</td>${soll?`<td>${Math.round(A.perDay/soll*100)} %</td>`:""}<td>${fmtDur(A.span)}</td><td>${fmt1(A.perHour)}</td><td>${fmtGap(A.avg)}</td><td>${nInt}</td><td>${A.red}</td><td>${fmtDur(A.inter)}</td></tr>`:"")+`</tbody></table>`;
+
+  /* 3 · Vorwoche | längste Unterbrechungen */
+  h+=`<div class="b2"><div><div class="bs">Vergleich zur Vorwoche</div>`;
+  if(wk&&PA){
+    const row=(l,c,p,f)=>{const d=c!=null&&p!=null?c-p:null;const same=d==null||Math.abs(d)<1e-9;
+      return `<tr><td class="l">${l}</td><td>${f(p)}</td><td>${f(c)}</td><td>${same?"±0":(d>0?"+":"−")+f(Math.abs(d))}</td></tr>`;};
+    h+=`<table class="bt"><thead><tr><th class="l"></th><th>${kwLabel(prevWeekKey(wk))}</th><th>${kwLabel(wk)}</th><th>Veränderung</th></tr></thead><tbody>`+
+      row("Ø Paletten pro Tag",A.perDay,PA.perDay,fmt1)+row("Paletten pro Stunde",A.perHour,PA.perHour,fmt1)+row("Unterbrechungen",nInt,PA.yel+PA.red,fmt)+row("Unterbrechungszeit",A.inter,PA.inter,fmtDur)+`</tbody></table>`;
+  }else h+=`<p class="bmut bpad">${wk?`Für ${kwLabel(prevWeekKey(wk))} liegen keine Daten vor.`:"Nur bei Auswahl einer Kalenderwoche."}</p>`;
+  h+=`</div><div><div class="bs">Längste Unterbrechungen</div>`;
+  h+=crit.length?`<table class="bt"><thead><tr><th class="l">Tag</th><th>Uhrzeit</th><th>Dauer</th><th class="l">Begründung</th></tr></thead><tbody>${crit.slice(0,5).map(({d,m})=>`<tr><td class="l">${day(d.day)}</td><td>${hm(m.prev.t)}–${hm(m.t)}</td><td>${fmtGap(m.gap)}</td><td class="l">${rsn(m)}</td></tr>`).join("")}</tbody></table>`:`<p class="bmut bpad">Keine Unterbrechungen über 15 Minuten.</p>`;
+  h+=`</div></div>`;
+
+  /* 4 · Notizen */
+  h+=`<div class="bs">Gesprächsnotizen</div><div class="bnotes">${'<div></div>'.repeat(5)}</div>`;
+  h+=`<footer class="bf">Grundlage: Buchungen der Tätigkeit „Umlagerung“. Unterbrechung = mehr als 15 Minuten zwischen zwei aufeinanderfolgenden Paletten. Arbeitszeit = erste bis letzte Palette des Tages${STA.excl&&A.exN?", abzüglich begründeter Unterbrechungen":""}.${A.reasoned?` Begründete Unterbrechungen: ${A.reasoned}${STA.excl?" (herausgerechnet)":""}.`:""}${anhang?" Details im Anhang.":""}</footer></section>`;
+
+  /* Anhang */
+  if(anhang){
+    h+=`<section class="bp bbreak">`+head("Anhang");
+    if(D.length){
+      const lo=Math.floor(Math.min(...D.map(d=>d.start))),hi=Math.ceil(Math.max(...D.map(d=>d.end))+0.001);
+      const W=700,LW=56,R=16,rowH=20,T=13,H=T+rowH*D.length+2,iw=W-LW-R,x=t=>LW+(t-lo)/(hi-lo)*iw;
+      let s=`<svg viewBox="0 0 ${W} ${H}" class="bsvg">`;
+      for(let hr=lo;hr<=hi;hr++)s+=`<line x1="${x(hr)}" x2="${x(hr)}" y1="${T-2}" y2="${H}" stroke="#ededed"/><text x="${x(hr)}" y="${T-5}" font-size="7.5" fill="#8a8a8a" text-anchor="middle" font-family="IBM Plex Sans,Arial,sans-serif">${hr}:00</text>`;
+      D.forEach((d,i)=>{const cy=T+rowH*i+rowH/2;
+        s+=`<text x="0" y="${cy+2.8}" font-size="8" fill="#333" font-family="IBM Plex Sans,Arial,sans-serif">${day(d.day)}</text><line x1="${x(d.start)}" x2="${x(d.end)}" y1="${cy}" y2="${cy}" stroke="#d9d9d9" stroke-width="1"/>`;
+        d.moves.forEach(m=>{if(m.gap!=null&&m.gap>S_Y){const r=reasonOf(m);s+=`<rect x="${x(m.prev.t)}" y="${cy-3.5}" width="${Math.max(1.5,x(m.t)-x(m.prev.t))}" height="7" rx="1.5" fill="${r?"#c3c9d6":m.gap>=S_R?"#8c8c8c":"#c8c8c8"}"/>`;}});
+        d.moves.forEach(m=>s+=`<line x1="${x(m.t).toFixed(1)}" x2="${x(m.t).toFixed(1)}" y1="${cy-4.5}" y2="${cy+4.5}" stroke="#333" stroke-width=".6"/>`);});
+      h+=`<div class="bs">Tagesverlauf<span class="blg"><i style="background:#333;width:1.5px"></i>Palette<i style="background:#c8c8c8"></i>Unterbrechung 15–30 Min.<i style="background:#8c8c8c"></i>über 30 Min.<i style="background:#c3c9d6"></i>begründet</span></div>${s}</svg>`;
+    }
+    h+=`<div class="bs">Unterbrechungen nach Uhrzeit<span class="blg"><i style="background:#c8c8c8"></i>15–30 Min.<i style="background:#8c8c8c"></i>über 30 Min.</span></div><div class="bchart">${staGapHour(D,true)}</div>`;
+    h+=`<div class="bs">Alle Unterbrechungen über 15 Minuten · ${crit.length}</div>`;
+    h+=crit.length?`<table class="bt bts"><thead><tr><th class="l">Tag</th><th>von</th><th>bis</th><th>Dauer</th><th class="l">Palette davor</th><th class="l">Nächste Palette</th><th class="l">Begründung</th></tr></thead><tbody>`+
+      crit.map(({d,m})=>`<tr><td class="l">${day(d.day)}</td><td>${hm(m.prev.t)}</td><td>${hm(m.t)}</td><td>${fmtGap(m.gap)}</td><td class="l">${esc(m.prev.von)} → ${esc(m.prev.nach)}</td><td class="l">${esc(m.von)} → ${esc(m.nach)}</td><td class="l">${rsn(m)}</td></tr>`).join("")+`</tbody></table>`:`<p class="bmut">Keine Unterbrechungen über 15 Minuten.</p>`;
+    h+=`</section>`;
+  }
+  $("#printArea").innerHTML=h;
+}
 
 /* ---------- Matrix ---------- */
 function matrixData(role){
@@ -1398,7 +2124,7 @@ function loadFile(file){
         $("#empty").hidden=true;$("#app").hidden=false;$("#loading").hidden=true;
         setStatus(true,fmt(DATA.rows.length)+" Zeilen");
         render();
-        setTab(lsGet("packpick-kpi-tab")==="search"?"search":"kpi");
+        setTab(TAB);
         if($("#searchIn").value.trim())runSearch();
       }catch(err){console.error(err);showErr(err.message||"Die Datei konnte nicht gelesen werden.");}
     },20);
@@ -1411,9 +2137,12 @@ $("#file").onchange=e=>{loadFile(e.target.files[0]);e.target.value="";};
 const drop=$("#drop");
 ["dragenter","dragover"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over");}));
 ["dragleave","drop"].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();if(ev==="drop"||e.target===document.documentElement)drop.classList.remove("over");}));
-document.addEventListener("drop",e=>{const f=e.dataTransfer&&e.dataTransfer.files[0];if(f)loadFile(f);});
+document.addEventListener("drop",e=>{const fl=e.dataTransfer&&e.dataTransfer.files;if(!fl||!fl.length)return;if(TAB==="sta")staLoad([...fl]);else loadFile(fl[0]);});
+["dragenter","dragover"].forEach(ev=>document.addEventListener(ev,()=>$("#sDrop").classList.add("over")));
+["dragleave","drop"].forEach(ev=>document.addEventListener(ev,e=>{if(ev==="drop"||e.target===document.documentElement)$("#sDrop").classList.remove("over");}));
 QUALI=loadQuali();
+setTab(lsGet("packpick-kpi-tab")||"kpi");
 
-window.__kpi={toggleSel,runSearch,trackLink,get DATA(){return DATA},get CUR(){return CUR},ST,SET,NET:()=>NET,autoMatch,loadHist,qualiOf};
+window.__kpi={STA,staLoad,setTab,toggleSel,runSearch,trackLink,get DATA(){return DATA},get CUR(){return CUR},ST,SET,NET:()=>NET,autoMatch,loadHist,qualiOf};
 })();
 </script>
