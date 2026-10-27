@@ -277,7 +277,7 @@ input.soll{width:76px;text-align:center;font-family:var(--f-mono);padding:4px 6p
   #printArea table.bts td{padding:1.1mm 1.6mm;font-size:7.6pt}
   #printArea table.bts td.l{white-space:normal}
   #printArea table.bts td:first-child{white-space:nowrap}
-  #printArea .bchart svg{max-width:115mm}
+  #printArea .bchart svg{max-width:100mm}
   #printArea b{font-weight:600}
   #printArea .bd{display:inline-block;width:5.5px;height:5.5px;border-radius:50%;margin-right:5px;vertical-align:1px}
   #printArea .bmut{color:#8a8a8a}
@@ -1300,7 +1300,7 @@ $("#searchClr").onclick=()=>{$("#searchIn").value="";$("#searchOut").innerHTML="
 $("#searchIn").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();runSearch();}});
 
 /* ---------- Stapler ---------- */
-const S_Y=15,S_R=30; // Minuten: über 15 gelb, ab 30 rot
+const S_Y=15,S_R=30,S_B=20; // Minuten: über 15 gelb, ab 30 rot · Gesprächsbogen listet ab 20
 const RKEY="packpick-sta-reasons-v1",SOLLKEY="packpick-sta-soll-v1",EXKEY="packpick-sta-excl-v1";
 const REASONS=["Pause","Nachschub gewartet","Stapler defekt / laden","Sonderaufgabe","Sonstiges"];
 function lsJSON(k,d){try{const v=JSON.parse(lsGet(k)||"null");return v&&typeof v==="object"?v:d}catch(e){return d}}
@@ -1672,16 +1672,17 @@ function staHist(gaps){
   s+=`<line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" stroke="var(--line2)"/>`;
   return s+"</svg>";
 }
-function staGapHour(D,print){
+function staGapHour(D,print,thr){
+  const TH=thr||S_Y;const hit=g=>thr?g>=thr:g>S_Y;
   const yel=new Array(24).fill(0),red=new Array(24).fill(0),mins=new Array(24).fill(0);
-  D.forEach(d=>d.gapMoves.forEach(m=>{if(m.gap>S_Y){const h=Math.floor(m.prev.t);(m.gap>=S_R?red:yel)[h]++;mins[h]+=m.gap;}}));
+  D.forEach(d=>d.gapMoves.forEach(m=>{if(hit(m.gap)){const h=Math.floor(m.prev.t);(m.gap>=S_R?red:yel)[h]++;mins[h]+=m.gap;}}));
   const act=new Array(24).fill(0);D.forEach(d=>d.moves.forEach(m=>act[m.hour]++));
   const lo=act.findIndex(v=>v>0),hi=23-[...act].reverse().findIndex(v=>v>0);
   if(lo<0)return '<span class="muted">Keine Daten im Filter.</span>';
-  if(!yel.some(v=>v)&&!red.some(v=>v))return '<span class="muted">Keine Abstände über 15 Minuten im Filter.</span>';
+  if(!yel.some(v=>v)&&!red.some(v=>v))return `<span class="muted">Keine Abstände ${thr?"ab "+thr:"über 15"} Minuten.</span>`;
   const W=print?420:1000,H=print?190:220,L=34,R=10,T=16,B=30,n=hi-lo+1,iw=W-L-R,ih=H-T-B,step=iw/n,bw=step*.62;
   const tot=yel.map((v,i)=>v+red[i]);const max=niceMax(Math.max(...tot)),y=v=>T+ih-v/max*ih;
-  const cY=print?"#c8c8c8":"var(--pick)",cR=print?"#8c8c8c":"var(--warn)",ax=print?' style="fill:#8a8a8a;font-family:IBM Plex Sans,Arial,sans-serif"':"";
+  const cY=print?"#e3b341":"var(--pick)",cR=print?"#cf5b4f":"var(--warn)",ax=print?' style="fill:#8a8a8a;font-family:IBM Plex Sans,Arial,sans-serif"':"";
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Unterbrechungen nach Uhrzeit">`;
   for(let i=0;i<=2;i++){const v=max*i/2,yy=y(v);s+=`<line ${print?'stroke="#ddd"':'class="gridl"'} x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}"/><text class="axis"${ax} x="${L-5}" y="${yy+3}" text-anchor="end">${fmt(v)}</text>`;}
   for(let hr=lo;hr<=hi;hr++){const i=hr-lo,cx=L+step*i+step/2;const hh=String(hr).padStart(2,"0");
@@ -1749,11 +1750,14 @@ function buildBogen(drv,per,anhang){
   const D=STA.days.filter(d=>d.drv===drv&&d.day>=from&&d.day<=to);const A=staAgg(D);
   const P=wk?STA.days.filter(d=>d.drv===drv&&d.wk===prevWeekKey(wk)):[];const PA=P.length?staAgg(P):null;
   const soll=sollOf(drv);
+  const dotC={ok:"#3a8f5c",mid:"#d9a21b",low:"#c8473b"};
+  const dot=c=>dotC[c]?`<i class="bd" style="background:${dotC[c]}"></i>`:"";
+  const gv=m=>m==null?"–":dot(gapCls(m))+fmtGap(m);
   const today=new Date();const td=String(today.getDate()).padStart(2,"0")+"."+String(today.getMonth()+1).padStart(2,"0")+"."+today.getFullYear();
   const period=`${wk?kwLabel(wk)+" · ":""}${dShort(from)} – ${dShort(to)}`;
   const day=d=>`${WD[wday(d)]} ${dayLabel(d)}`;
   const head=sub=>`<header class="bh"><div><div class="bk">Leistungsauswertung Stapler${sub?" · "+sub:""}</div><div class="bn">${esc(drv)}</div></div><div class="bm"><div><span>Zeitraum</span>${period}</div><div><span>Erstellt</span>${td}</div></div></header>`;
-  const crit=D.flatMap(d=>d.moves.filter(m=>m.gap!=null&&m.gap>S_Y).map(m=>({d,m}))).sort((a,b)=>b.m.gap-a.m.gap);
+  const crit=D.flatMap(d=>d.moves.filter(m=>m.gap!=null&&m.gap>=S_B).map(m=>({d,m}))).sort((a,b)=>b.m.gap-a.m.gap);
   const rsn=m=>{const r=reasonOf(m);return r?esc(r.r)+(r.note?` <span class="bmut">· ${esc(r.note)}</span>`:""):'<span class="bmut">–</span>';};
   const nInt=A.yel+A.red;
 
@@ -1763,50 +1767,50 @@ function buildBogen(drv,per,anhang){
   const card=(l,v,s)=>`<div class="bc"><div class="bcl">${l}</div><div class="bcv">${v}</div><div class="bcs">${s}</div></div>`;
   h+=`<div class="bs">Zusammenfassung</div><div class="bcg">`+
     card("Paletten umgelagert",fmt(A.n),`an ${A.days} ${A.days===1?"Arbeitstag":"Arbeitstagen"}`)+
-    card("Ø Paletten pro Tag",fmt1(A.perDay),soll?`${Math.round(A.perDay/soll*100)} % vom Soll (${soll})`:"kein Soll hinterlegt")+
+    card("Ø Paletten pro Tag",fmt1(A.perDay),soll?`${dot(sollCls(A.perDay,soll))}${Math.round(A.perDay/soll*100)} % vom Soll (${soll})`:"kein Soll hinterlegt")+
     card("Paletten pro Stunde",fmt1(A.perHour),`bei ${fmtDur(A.span)} Arbeitszeit`)+
-    card("Unterbrechungen",fmt(nInt),`über 15 Min., davon ${A.red} über 30 Min.`)+
+    card("Unterbrechungen",fmt(nInt),`${dot(A.red?"low":nInt?"mid":"ok")}über 15 Min., davon ${A.red} über 30 Min.`)+
     `</div>`;
 
   /* 2 · Tagesübersicht */
   h+=`<div class="bs">Tagesübersicht</div><table class="bt"><thead><tr><th class="l">Tag</th><th>Paletten</th>${soll?"<th>vom Soll</th>":""}<th>Arbeitszeit</th><th>Paletten / Std</th><th>Ø Abstand</th><th>Unterbrechungen</th><th>davon über 30 Min.</th><th>Unterbrechungszeit</th></tr></thead><tbody>`+
-    D.map(d=>`<tr><td class="l">${day(d.day)}</td><td>${fmt(d.n)}</td>${soll?`<td>${Math.round(d.n/soll*100)} %</td>`:""}<td>${fmtDur(d.span)}</td><td>${fmt1(d.span>0?d.n/(d.span/60):null)}</td><td>${fmtGap(d.avg)}</td><td>${d.yel+d.red}</td><td>${d.red}</td><td>${fmtDur(d.inter)}</td></tr>`).join("")+
+    D.map(d=>`<tr><td class="l">${day(d.day)}</td><td>${fmt(d.n)}</td>${soll?`<td>${dot(sollCls(d.n,soll))}${Math.round(d.n/soll*100)} %</td>`:""}<td>${fmtDur(d.span)}</td><td>${fmt1(d.span>0?d.n/(d.span/60):null)}</td><td>${gv(d.avg)}</td><td>${d.yel+d.red}</td><td>${d.red}</td><td>${fmtDur(d.inter)}</td></tr>`).join("")+
     (D.length>1?`<tr class="bsum"><td class="l">Gesamt</td><td>${fmt(A.n)}</td>${soll?`<td>${Math.round(A.perDay/soll*100)} %</td>`:""}<td>${fmtDur(A.span)}</td><td>${fmt1(A.perHour)}</td><td>${fmtGap(A.avg)}</td><td>${nInt}</td><td>${A.red}</td><td>${fmtDur(A.inter)}</td></tr>`:"")+`</tbody></table>`;
 
   /* 3 · Vorwoche | längste Unterbrechungen */
   h+=`<div class="b2"><div><div class="bs">Vergleich zur Vorwoche</div>`;
   if(wk&&PA){
-    const row=(l,c,p,f)=>{const d=c!=null&&p!=null?c-p:null;const same=d==null||Math.abs(d)<1e-9;
-      return `<tr><td class="l">${l}</td><td>${f(p)}</td><td>${f(c)}</td><td>${same?"±0":(d>0?"+":"−")+f(Math.abs(d))}</td></tr>`;};
+    const row=(l,c,p,f,lower)=>{const d=c!=null&&p!=null?c-p:null;const same=d==null||Math.abs(d)<1e-9;const good=same?null:lower?d<0:d>0;
+      return `<tr><td class="l">${l}</td><td>${f(p)}</td><td>${f(c)}</td><td>${same?"±0":dot(good?"ok":"low")+(d>0?"+":"−")+f(Math.abs(d))}</td></tr>`;};
     h+=`<table class="bt"><thead><tr><th class="l"></th><th>${kwLabel(prevWeekKey(wk))}</th><th>${kwLabel(wk)}</th><th>Veränderung</th></tr></thead><tbody>`+
-      row("Ø Paletten pro Tag",A.perDay,PA.perDay,fmt1)+row("Paletten pro Stunde",A.perHour,PA.perHour,fmt1)+row("Unterbrechungen",nInt,PA.yel+PA.red,fmt)+row("Unterbrechungszeit",A.inter,PA.inter,fmtDur)+`</tbody></table>`;
+      row("Ø Paletten pro Tag",A.perDay,PA.perDay,fmt1)+row("Paletten pro Stunde",A.perHour,PA.perHour,fmt1)+row("Unterbrechungen",nInt,PA.yel+PA.red,fmt,true)+row("Unterbrechungszeit",A.inter,PA.inter,fmtDur,true)+`</tbody></table>`;
   }else h+=`<p class="bmut bpad">${wk?`Für ${kwLabel(prevWeekKey(wk))} liegen keine Daten vor.`:"Nur bei Auswahl einer Kalenderwoche."}</p>`;
-  h+=`</div><div><div class="bs">Längste Unterbrechungen</div>`;
-  h+=crit.length?`<table class="bt"><thead><tr><th class="l">Tag</th><th>Uhrzeit</th><th>Dauer</th><th class="l">Begründung</th></tr></thead><tbody>${crit.slice(0,5).map(({d,m})=>`<tr><td class="l">${day(d.day)}</td><td>${hm(m.prev.t)}–${hm(m.t)}</td><td>${fmtGap(m.gap)}</td><td class="l">${rsn(m)}</td></tr>`).join("")}</tbody></table>`:`<p class="bmut bpad">Keine Unterbrechungen über 15 Minuten.</p>`;
+  h+=`</div><div><div class="bs">Längste Abstände</div>`;
+  h+=crit.length?`<table class="bt"><thead><tr><th class="l">Tag</th><th>Uhrzeit</th><th>Dauer</th><th class="l">Begründung</th></tr></thead><tbody>${crit.slice(0,5).map(({d,m})=>`<tr><td class="l">${day(d.day)}</td><td>${hm(m.prev.t)}–${hm(m.t)}</td><td>${gv(m.gap)}</td><td class="l">${rsn(m)}</td></tr>`).join("")}</tbody></table>`:`<p class="bmut bpad">Keine Unterbrechungen ab 20 Minuten.</p>`;
   h+=`</div></div>`;
 
   /* 4 · Notizen */
   h+=`<div class="bs">Gesprächsnotizen</div><div class="bnotes">${'<div></div>'.repeat(5)}</div>`;
-  h+=`<footer class="bf">Grundlage: Buchungen der Tätigkeit „Umlagerung“. Unterbrechung = mehr als 15 Minuten zwischen zwei aufeinanderfolgenden Paletten. Arbeitszeit = erste bis letzte Palette des Tages${STA.excl&&A.exN?", abzüglich begründeter Unterbrechungen":""}.${A.reasoned?` Begründete Unterbrechungen: ${A.reasoned}${STA.excl?" (herausgerechnet)":""}.`:""}${anhang?" Details im Anhang.":""}</footer></section>`;
+  h+=`<footer class="bf">Grundlage: Buchungen der Tätigkeit „Umlagerung“. Unterbrechung = mehr als 15 Minuten zwischen zwei aufeinanderfolgenden Paletten; einzeln aufgeführt werden Abstände ab 20 Minuten. Arbeitszeit = erste bis letzte Palette des Tages${STA.excl&&A.exN?", abzüglich begründeter Unterbrechungen":""}.${A.reasoned?` Begründete Unterbrechungen: ${A.reasoned}${STA.excl?" (herausgerechnet)":""}.`:""}${anhang?" Details im Anhang.":""}</footer></section>`;
 
   /* Anhang */
   if(anhang){
     h+=`<section class="bp bbreak">`+head("Anhang");
     if(D.length){
       const lo=Math.floor(Math.min(...D.map(d=>d.start))),hi=Math.ceil(Math.max(...D.map(d=>d.end))+0.001);
-      const W=700,LW=56,R=16,rowH=20,T=13,H=T+rowH*D.length+2,iw=W-LW-R,x=t=>LW+(t-lo)/(hi-lo)*iw;
+      const W=700,LW=56,R=16,rowH=17,T=13,H=T+rowH*D.length+2,iw=W-LW-R,x=t=>LW+(t-lo)/(hi-lo)*iw;
       let s=`<svg viewBox="0 0 ${W} ${H}" class="bsvg">`;
       for(let hr=lo;hr<=hi;hr++)s+=`<line x1="${x(hr)}" x2="${x(hr)}" y1="${T-2}" y2="${H}" stroke="#ededed"/><text x="${x(hr)}" y="${T-5}" font-size="7.5" fill="#8a8a8a" text-anchor="middle" font-family="IBM Plex Sans,Arial,sans-serif">${hr}:00</text>`;
       D.forEach((d,i)=>{const cy=T+rowH*i+rowH/2;
         s+=`<text x="0" y="${cy+2.8}" font-size="8" fill="#333" font-family="IBM Plex Sans,Arial,sans-serif">${day(d.day)}</text><line x1="${x(d.start)}" x2="${x(d.end)}" y1="${cy}" y2="${cy}" stroke="#d9d9d9" stroke-width="1"/>`;
-        d.moves.forEach(m=>{if(m.gap!=null&&m.gap>S_Y){const r=reasonOf(m);s+=`<rect x="${x(m.prev.t)}" y="${cy-3.5}" width="${Math.max(1.5,x(m.t)-x(m.prev.t))}" height="7" rx="1.5" fill="${r?"#c3c9d6":m.gap>=S_R?"#8c8c8c":"#c8c8c8"}"/>`;}});
-        d.moves.forEach(m=>s+=`<line x1="${x(m.t).toFixed(1)}" x2="${x(m.t).toFixed(1)}" y1="${cy-4.5}" y2="${cy+4.5}" stroke="#333" stroke-width=".6"/>`);});
-      h+=`<div class="bs">Tagesverlauf<span class="blg"><i style="background:#333;width:1.5px"></i>Palette<i style="background:#c8c8c8"></i>Unterbrechung 15–30 Min.<i style="background:#8c8c8c"></i>über 30 Min.<i style="background:#c3c9d6"></i>begründet</span></div>${s}</svg>`;
+        d.moves.forEach(m=>{if(m.gap!=null&&m.gap>=S_B){const r=reasonOf(m);s+=`<rect x="${x(m.prev.t)}" y="${cy-3.5}" width="${Math.max(1.5,x(m.t)-x(m.prev.t))}" height="7" rx="1.5" fill="${r?"#9fb0d8":m.gap>=S_R?"#cf5b4f":"#e3b341"}"/>`;}});
+        d.moves.forEach(m=>s+=`<line x1="${x(m.t).toFixed(1)}" x2="${x(m.t).toFixed(1)}" y1="${cy-4.5}" y2="${cy+4.5}" stroke="#3a8f5c" stroke-width=".7"/>`);});
+      h+=`<div class="bs">Tagesverlauf<span class="blg"><i style="background:#3a8f5c;width:1.5px"></i>Palette<i style="background:#e3b341"></i>Abstand 20–30 Min.<i style="background:#cf5b4f"></i>ab 30 Min.<i style="background:#9fb0d8"></i>begründet</span></div>${s}</svg>`;
     }
-    h+=`<div class="bs">Unterbrechungen nach Uhrzeit<span class="blg"><i style="background:#c8c8c8"></i>15–30 Min.<i style="background:#8c8c8c"></i>über 30 Min.</span></div><div class="bchart">${staGapHour(D,true)}</div>`;
-    h+=`<div class="bs">Alle Unterbrechungen über 15 Minuten · ${crit.length}</div>`;
+    h+=`<div class="bs">Abstände ab 20 Minuten nach Uhrzeit<span class="blg"><i style="background:#e3b341"></i>20–30 Min.<i style="background:#cf5b4f"></i>ab 30 Min.</span></div><div class="bchart">${staGapHour(D,true,S_B)}</div>`;
+    h+=`<div class="bs">Alle Abstände ab 20 Minuten · ${crit.length}</div>`;
     h+=crit.length?`<table class="bt bts"><thead><tr><th class="l">Tag</th><th>von</th><th>bis</th><th>Dauer</th><th class="l">Palette davor</th><th class="l">Nächste Palette</th><th class="l">Begründung</th></tr></thead><tbody>`+
-      crit.map(({d,m})=>`<tr><td class="l">${day(d.day)}</td><td>${hm(m.prev.t)}</td><td>${hm(m.t)}</td><td>${fmtGap(m.gap)}</td><td class="l">${esc(m.prev.von)} → ${esc(m.prev.nach)}</td><td class="l">${esc(m.von)} → ${esc(m.nach)}</td><td class="l">${rsn(m)}</td></tr>`).join("")+`</tbody></table>`:`<p class="bmut">Keine Unterbrechungen über 15 Minuten.</p>`;
+      crit.map(({d,m})=>`<tr><td class="l">${day(d.day)}</td><td>${hm(m.prev.t)}</td><td>${hm(m.t)}</td><td>${gv(m.gap)}</td><td class="l">${esc(m.prev.von)} → ${esc(m.prev.nach)}</td><td class="l">${esc(m.von)} → ${esc(m.nach)}</td><td class="l">${rsn(m)}</td></tr>`).join("")+`</tbody></table>`:`<p class="bmut">Keine Abstände ab 20 Minuten.</p>`;
     h+=`</section>`;
   }
   $("#printArea").innerHTML=h;
